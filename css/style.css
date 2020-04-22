@@ -1,0 +1,64 @@
+@font-face {
+    font-family: 'hierofont';
+    src: url("https://iclassifier.pw/static/fonts/EgyptianHiero.woff") format("woff");
+}
+
+@font-face {
+    font-family: 'antinoou';
+    src: url("https://iclassifier.pw/static/fonts/Antinoou.woff") format("woff");
+}
+
+@font-face {
+    font-family: 'cuneiform';
+    src: url('https://iclassifier.pw/static/fonts/CuneiformComposite.woff') format('woff');
+}
+
+.chinese {
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.hieroglyphic {
+    font-family: 'hierofont', sans-serif;
+}
+
+.cuneiform {
+    font-family: 'cuneiform', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding-bottom: 40px;
+    background-color: lightgrey;
+    font-family: 'Raleway', sans-serif;
+	font-size: 11pt;
+}
+
+h4 {
+	display: inline-block;
+}
+
+button {
+	font-size: 11pt;
+}
+
+option {
+	font-size: 11pt;
+}
+
+select {
+	font-size: 11pt;
+}
+
+div#main {
+    padding-left: 20px;
+    font-family: 'Roboto', sans-serif;
+}	
+
+div#report-main {
+	margin: 15px;
+	margin-left: 0;
+}
+
+div#button-row {
+	margin-bottom: 10px;
+}
