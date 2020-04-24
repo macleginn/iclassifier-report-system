@@ -21,6 +21,11 @@
     font-family: 'hierofont', sans-serif;
 }
 
+.unicode-egyptian {
+	font-family: 'Roboto', sans-serif;
+	font-size: 12pt;
+}
+
 .cuneiform {
     font-family: 'cuneiform', sans-serif;
 }
@@ -61,4 +66,25 @@ div#report-main {
 
 div#button-row {
 	margin-bottom: 10px;
+}
+
+table.stats {
+	border-collapse: collapse;
+	table-layout: fixed;
+	width: 640px;
+	border-top: 1px dotted black;
+	border-bottom: 1px dotted black;
+}
+
+table.stats tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table.stats tr:nth-child(odd) {
+    background-color: white;
+}
+
+
+table.stats tr {
+	padding: 5px;
 }

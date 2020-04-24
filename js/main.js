@@ -9,12 +9,55 @@ let project          = null,
 	showLemmaReports = false,
 	showMap          = false;
 
-let tokenData = null,
-	clfArr    = [],
-	lemmaData = null;
+let tokenData   = null,
+	clfArr      = [],
+	lemmaData   = null,
+	witnessData = null;
+
+// Data for classifier reports
+let clfDict = {},
+	comDict = {},
+	lemDict = {},
+	posDict = {},
+	ordDict = {},
+	scrDict = {};
+
+function cmpInts(a, b) {
+    let aInt = parseInt(a),
+        bInt = parseInt(b);
+    if (aInt < bInt)
+        return -1;
+    else if (aInt > bInt)
+        return 1;
+    else
+        return 0;
+}
+
+function sortCounterDesc(dict) {
+	let result = [];
+	for (const key in dict)
+		if (dict.hasOwnProperty(key))
+			result.push([key, dict[key]]);
+	result.sort((a, b) => -1 * cmpInts(a[1], b[1]));
+	return result;
+}
 
 function byID(id) {
 	return document.getElementById(id);
+}
+
+
+function goFullScreen(elementID) {
+	let element = byID(elementID);
+	if (element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if (element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+	} else if (element.webkitRequestFullscreen) {
+		element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+	} else if (element.msRequestFullscreen) {
+		element.msRequestFullscreen();
+	}
 }
 
 function extractClfsFromString(s) {
@@ -54,7 +97,11 @@ async function switchProject(element) {
 	showClfReports   = false;
 	showLemmaReports = false;
 	showMap          = false;
-	
+	clfReport.currentClf = '---';
+
+	byID('canvas1').innerHTML = '';
+	byID('canvas2').innerHTML = '';
+
 	// Disable the buttons while loading the data.
 	project = null;
 	downloadingData = true;
@@ -98,6 +145,14 @@ async function switchProject(element) {
 		return;
 	}
 	lemmaData = await response.json();
+
+	response = await fetch(`${requestURL}/${newProject}/witnesses/all`);
+		if (!response.ok) {
+		const message = await response.text();
+		alert("Failed to download witness info from the server: " + message);
+		return;
+	}
+	witnessData = await response.json();
 
 	// Turn the buttons back on.
 	project = newProject;
