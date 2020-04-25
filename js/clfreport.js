@@ -154,6 +154,7 @@ function getClfReport(mdc) {
 	lemDict = {};
 	posDict = {};
 	ordDict = {};
+	scrDict = {};
 
 	for (const key in tokenData) {
 		if (!tokenData.hasOwnProperty(key))

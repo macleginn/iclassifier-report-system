@@ -185,7 +185,7 @@ async function fetchProjects() {
 	const response = await fetch(`${authURL}/getprojectsforbrowsing`);
 	if (!response.ok) {
 		alert("Couldn’t download the list of projects from the server.");
-				return;
+		return;
 	}
 
 	const data = await response.json();
