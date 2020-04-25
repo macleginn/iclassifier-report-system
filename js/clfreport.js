@@ -44,8 +44,9 @@ let clfLemmaMap = {
 	view: () => m('div', [
 		m('h3', 'Lemma co-occurrence graph'),
 		m('div#canvas1', {style: {
-			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'black'
+			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
 		}}),
+		m('button', {onclick: () => {toggleBgrCol('canvas1')}}, 'Switch background color'),
 		m('button', {onclick: () => {goFullScreen('canvas1')}}, 'Go full screen')
 	])
 }
@@ -60,8 +61,9 @@ let clfClfMap = {
 	view: () => m('div', [
 		m('h3', 'Classifier co-occurrence graph'),
 		m('div#canvas2', {style: {
-			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'black'
+			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
 		}}),
+		m('button', {onclick: () => {toggleBgrCol('canvas2')}}, 'Switch background color'),
 		m('button', {onclick: () => {goFullScreen('canvas2')}}, 'Go full screen')
 	])
 }

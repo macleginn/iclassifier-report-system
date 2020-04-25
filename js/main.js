@@ -181,6 +181,16 @@ function toggleMap() {
 	m.redraw();
 }
 
+function toggleBgrCol(elementID) {
+	const currentCol = byID(elementID).style['background-color'];
+	let newCol;
+	if (currentCol === 'white')
+		newCol = 'black';
+	else
+		newCol = 'white';
+	byID(elementID).style['background-color'] = newCol;
+}
+
 async function fetchProjects() {
 	const response = await fetch(`${authURL}/getprojectsforbrowsing`);
 	if (!response.ok) {
