@@ -22,6 +22,25 @@ let clfDict = {},
 	ordDict = {},
 	scrDict = {};
 
+// A common part of classifier and lemma reports
+let statsDiv = {
+	view: vnode => {
+		const dict = vnode.attrs.data,
+			font   = vnode.attrs.font,
+			header = vnode.attrs.header;
+		if (JSON.stringify(dict) == JSON.stringify({}))
+			return m('div', 'No data');
+		else {
+			let sortedLemmaCounts = sortCounterDesc(dict);
+			return m('div', m(statsTable, {
+				data: sortedLemmaCounts, 
+				font: font,
+				header: header
+			}))
+		}
+	}
+}
+
 function cmpInts(a, b) {
     let aInt = parseInt(a),
         bInt = parseInt(b);

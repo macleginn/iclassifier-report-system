@@ -91,23 +91,7 @@ let clfStats = {
 	}
 }
 
-let statsDiv = {
-	view: vnode => {
-		const dict = vnode.attrs.data,
-			font   = vnode.attrs.font,
-			header = vnode.attrs.header;
-		if (JSON.stringify(dict) == JSON.stringify({}))
-			return m('div', 'No data');
-		else {
-			let sortedLemmaCounts = sortCounterDesc(dict);
-			return m('div', m(statsTable, {
-				data: sortedLemmaCounts, 
-				font: font,
-				header: header
-			}))
-		}
-	}
-}
+
 
 let statsTable = {
 	view: vnode => {
