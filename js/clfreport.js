@@ -46,8 +46,10 @@ let clfLemmaMap = {
 		m('div#canvas1', {style: {
 			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
 		}}),
-		m('button', {onclick: () => {toggleBgrCol('canvas1')}}, 'Switch background color'),
-		m('button', {onclick: () => {goFullScreen('canvas1')}}, 'Go full screen')
+		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas1');}}, 
+			'Switch background color'),
+		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas1');}}, 
+			'Go full screen')
 	])
 }
 
@@ -63,8 +65,10 @@ let clfClfMap = {
 		m('div#canvas2', {style: {
 			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
 		}}),
-		m('button', {onclick: () => {toggleBgrCol('canvas2')}}, 'Switch background color'),
-		m('button', {onclick: () => {goFullScreen('canvas2')}}, 'Go full screen')
+		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas2')}}, 
+			'Switch background color'),
+		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas2')}}, 
+			'Go full screen')
 	])
 }
 
