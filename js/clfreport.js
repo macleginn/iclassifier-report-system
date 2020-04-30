@@ -194,6 +194,8 @@ async function drawLemmaGraph(clf) {
 		baseGlyph = mdc2glyph(mdc),
 		radius = 10;
 
+	console.log(clf, mdc, baseGlyph);
+
 	// --- Lemma graph ---
 	let nodes = new vis.DataSet(),
 		edges = new vis.DataSet(),
@@ -222,7 +224,7 @@ async function drawLemmaGraph(clf) {
 
 	new vis.Network(container, graphData, options);
 
-		// If a Unicode glyph is missing, use a picture for the centre node.
+	// If a Unicode glyph is missing, use a picture for the centre node.
 	if (projectType === 'hieroglyphic' && baseGlyph === clf) {
 		try {
 			const response = await fetch(

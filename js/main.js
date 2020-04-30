@@ -176,7 +176,8 @@ async function switchProject(element) {
 	showClfReports   = false;
 	showLemmaReports = false;
 	showMap          = false;
-	clfReport.currentClf = '---';
+	clfReport.currentClf     = '---';
+	lemmaReport.currentLemma = '---';
 
 	byID('canvas1').innerHTML = '';
 	byID('canvas2').innerHTML = '';
@@ -241,6 +242,9 @@ async function switchProject(element) {
 }
 
 function toggleClfReport() {
+	clfReport.currentClf     = '---';
+	byID('canvas1').innerHTML = '';
+	byID('canvas2').innerHTML = '';
 	showClfReports   = true;
 	showLemmaReports = false;
 	showMap          = false;
@@ -248,6 +252,8 @@ function toggleClfReport() {
 }
 
 function toggleLemmaReport() {
+	lemmaReport.currentLemma = '---';
+	byID('canvas').innerHTML = '';
 	showClfReports   = false,
 	showLemmaReports = true,
 	showMap          = false;
