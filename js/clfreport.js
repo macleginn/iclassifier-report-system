@@ -37,8 +37,8 @@ let clfReport = {
 let clfLemmaMap = {
 	onupdate: vnode => {
 		if (vnode.attrs.clf !== '---') {
-			//console.log('Drawing the lemma graph.');			
-			drawLemmaGraph(vnode.attrs.clf)
+			console.log('Drawing the lemma graph.');			
+			drawLemmaGraph(vnode.attrs.clf);
 		}
 	},
 	view: () => m('div', [
@@ -56,8 +56,8 @@ let clfLemmaMap = {
 let clfClfMap = {
 	onupdate: vnode => {
 		if (vnode.attrs.clf !== '---') {
-			//console.log('Drawing the lemma graph.');
-			drawClfGraph(vnode.attrs.clf)
+			console.log('Drawing the clf-clf graph.');
+			drawClfGraph(vnode.attrs.clf);
 		}
 	},
 	view: () => m('div', [
@@ -88,43 +88,6 @@ let clfStats = {
 			m('h3', 'Script statistics'),
 			m(statsDiv, {data: scrDict, font: 'default', header: 'Script'}),
 	])
-	}
-}
-
-
-
-let statsTable = {
-	view: vnode => {
-		let rows   = vnode.attrs.data,
-			font   = vnode.attrs.font,
-			header = vnode.attrs.header,
-			cssClass;
-		if (font === 'unicode-egyptian')
-			cssClass = font;
-		else if (font === 'default')
-			cssClass = null;
-		else
-			cssClass = projectType;
-
-		return m('table.stats', [
-			m(
-				'tr',
-				{style: {'border-bottom': '1px dotted black'}},
-				[
-					m('th', 
-						{style: {
-							width: '570px',
-							'text-align': 'left'}}, 
-						header),
-					m('th', {style: {'text-align': 'left'}}, 'Count')
-				]
-			)
-		].concat(
-			rows.map(row => m(
-				'tr', 
-				[m('td', {class: cssClass}, row[0]), m('td', row[1])]
-			)))
-		);
 	}
 }
 
@@ -203,21 +166,8 @@ function getClfReport(mdc) {
 			witnessID !== null      &&
 			witnessID !== ''        &&
 			witnessData[witnessID] !== undefined) {
-			const script_thot_id = witnessData[witnessID].script;
-			let script;
-			switch (script_thot_id) {
-				case 'thot-71':
-					script = 'hieratic';
-					break;
-				case 'thot-67':
-					script = 'demotic';
-					break;
-				case 'thot-83':
-					script = 'hieroglyphs';
-					break;
-				default:
-					script = script_thot_id;
-			}
+			const scriptId = witnessData[witnessID].script,
+				  script   = normaliseScript(scriptId);
 			if (script !== '' && script !== null) {
 				if (!scrDict.hasOwnProperty(script))
 					scrDict[script] = 0;
@@ -270,7 +220,7 @@ async function drawLemmaGraph(clf) {
 			break;
 	}
 
-	let network = new vis.Network(container, graphData, options);
+	new vis.Network(container, graphData, options);
 
 		// If a Unicode glyph is missing, use a picture for the centre node.
 	if (projectType === 'hieroglyphic' && baseGlyph === clf) {
@@ -313,6 +263,8 @@ async function drawLemmaGraph(clf) {
 
 
 async function drawClfGraph(clf) {
+	console.log('Inside drawClfGraph');
+	
 	let idCounter = 2; // Centre nodes have id = 1.
 
 	const mdc = getClfMDC(clf),
@@ -353,7 +305,7 @@ async function drawClfGraph(clf) {
 			break;
 	}
 
-	let network = new vis.Network(container, graphData, options);
+	new vis.Network(container, graphData, options);
 
 	// If a Unicode glyph is missing, use a picture for the centre node.
 	if (projectType === 'hieroglyphic' && baseGlyph === mdc) {

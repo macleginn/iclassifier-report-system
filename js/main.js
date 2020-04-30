@@ -9,10 +9,11 @@ let project          = null,
 	showLemmaReports = false,
 	showMap          = false;
 
-let tokenData   = null,
-	clfArr      = [],
-	lemmaData   = null,
-	witnessData = null;
+let tokenData      = null,
+	compoundTokens = null,
+	clfArr         = [],
+	lemmaData      = null,
+	witnessData    = null;
 
 // Data for classifier reports
 let clfDict = {},
@@ -25,9 +26,9 @@ let clfDict = {},
 // A common part of classifier and lemma reports
 let statsDiv = {
 	view: vnode => {
-		const dict = vnode.attrs.data,
-			font   = vnode.attrs.font,
-			header = vnode.attrs.header;
+		const dict   = vnode.attrs.data,
+			  font   = vnode.attrs.font,
+			  header = vnode.attrs.header;
 		if (JSON.stringify(dict) == JSON.stringify({}))
 			return m('div', 'No data');
 		else {
@@ -41,6 +42,40 @@ let statsDiv = {
 	}
 }
 
+let statsTable = {
+	view: vnode => {
+		let rows   = vnode.attrs.data,
+			font   = vnode.attrs.font,
+			header = vnode.attrs.header,
+			cssClass;
+		if (font === 'unicode-egyptian')
+			cssClass = font;
+		else if (font === 'default')
+			cssClass = null;
+		else
+			cssClass = projectType;
+
+		return m('table.stats', [
+			m(
+				'tr',
+				{style: {'border-bottom': '1px dotted black'}},
+				[
+					m('th', 
+						{style: {
+							width: '570px',
+							'text-align': 'left'}}, 
+						header),
+					m('th', {style: {'text-align': 'left'}}, 'Count')
+				]
+			)
+		].concat(
+			rows.map(row => m(
+				'tr', 
+				[m('td', {class: cssClass}, row[0]), m('td', row[1])]
+			)))
+		);
+	}
+}
 function cmpInts(a, b) {
     let aInt = parseInt(a),
         bInt = parseInt(b);
@@ -112,6 +147,31 @@ function mdc2glyph(mdc) {
 		return mdc;
 }
 
+function filterCompoundTokens() {
+	compoundTokens = new Set();
+	for (const key in tokenData) {
+		if (!tokenData.hasOwnProperty(key))
+			continue;
+		const compoundId = tokenData[key].compound_id;
+		if (compoundId !== null && compoundId !== "")
+			compoundTokens.add(compoundId);	
+	}
+}
+
+function normaliseScript(scriptId) {
+	switch (scriptId) {
+		case 'thot-71':
+			return 'hieratic';
+		case 'thot-67':
+			return 'demotic';
+		case 'thot-83':
+			return 'hieroglyphs';
+		default:
+			return scriptId;
+	}
+}
+	
+
 async function switchProject(element) {
 	showClfReports   = false;
 	showLemmaReports = false;
@@ -137,6 +197,7 @@ async function switchProject(element) {
 		return;
 	}
 	tokenData = await response.json();
+	filterCompoundTokens();
 
 	// Extract classifiers
 	let clfSet = new Set();
@@ -202,12 +263,7 @@ function toggleMap() {
 
 function toggleBgrCol(elementID) {
 	const currentCol = byID(elementID).style['background-color'];
-	let newCol;
-	if (currentCol === 'white')
-		newCol = 'black';
-	else
-		newCol = 'white';
-	byID(elementID).style['background-color'] = newCol;
+	byID(elementID).style['background-color'] = (currentCol === 'white') ? 'black' : 'white';
 }
 
 async function fetchProjects() {
