@@ -19,6 +19,7 @@ let tokenData      = null,
 let clfDict = {},
 	comDict = {},
 	lemDict = {},
+	lemMean = {},
 	posDict = {},
 	ordDict = {},
 	scrDict = {};

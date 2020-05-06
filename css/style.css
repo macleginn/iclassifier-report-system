@@ -13,6 +13,11 @@
     src: url('https://iclassifier.pw/static/fonts/CuneiformComposite.woff') format('woff');
 }
 
+@font-face {
+	font-family: 'Roboto';
+	src: url('https://iclassifier.pw/static/fonts/Roboto.woff') format('woff');
+}
+
 .chinese {
     font-family: 'Noto Sans TC', sans-serif;
 }

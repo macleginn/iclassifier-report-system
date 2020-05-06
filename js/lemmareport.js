@@ -52,7 +52,7 @@ let lemmaReport = {
 let lemmaMap = {
 	onupdate: vnode => {
 		if (vnode.attrs.lemma !== '---')
-			drawLemmaGraph(vnode.attrs.lemma);
+			drawLemmaClfGraph(vnode.attrs.lemma);
 	},
 	view: () => m('div', [
 		m('h3', 'Classifier co-occurrence graph'),
@@ -112,20 +112,38 @@ function getTokensForLemma(lemma) {
 
 /**
  * Extracts classifiers from the token and shows hieroglyphs
- * in a larger font compared to the Latin text.
+ * in a larger font compared to the Latin text together with
+ * witness name and coordinates when those are available.
  */
 function showTokenWithClfs(tokenId) {
 	let mdc    = tokenData[tokenId].mdc,
 		clfArr = extractClfsFromString(tokenData[tokenId].mdc_w_markup);
+	
 	if (projectType === 'hieroglyphic')
 		clfArr = clfArr.map(
 			mdc => 
 			`<span class="hieroglyphic" style="font-size: 16pt">${mdc2glyph(mdc)}</span>`
 		);
+	
+	const witnessID = tokenData[tokenId].witness_id;
+	let witnessName = null,
+		witnessLine = tokenData[tokenId].coordinates_in_witness;
+	
+	if (witnessID !== '' && witnessID !== null && witnessData[witnessID] !== undefined) {
+		witnessName = witnessData[witnessID].name;
+	}
+	let witnessString = '';
+	if (witnessName !== null) {
+		witnessString = ` (${witnessName}`;
+		if (witnessLine !== null && witnessLine !== '')
+			witnessString = witnessString + `: ${witnessLine})`;
+		else
+			witnessString = witnessString + ')';
+	}
 	if (clfArr.length > 0)
-		return `${mdc} (${clfArr.join(', ')})`;
+		return `${mdc} (${clfArr.join(', ')})${witnessString}`;
 	else
-		return mdc;
+		return mdc + witnessString;
 }
 
 function getLemmaReport(lemma) {
@@ -173,8 +191,109 @@ function getLemmaReport(lemma) {
 	return lemma;
 }
 
-function drawLemmaClfGraph(lemma) {
-	console.log('drawLemmaGraph stub');
-	return lemma;
+async function drawLemmaClfGraph(lemma) {
+	let idCounter = 2; // The centre node has id = 1;
+
+	let nodes = new vis.DataSet(),
+		edges = new vis.DataSet(),
+		graphData = {
+			nodes: nodes,
+			edges: edges
+		},
+		options = {
+			nodes: { size: 40 }
+		},
+		container = document.getElementById('canvas');
+
+	let centralNodeFont;
+	switch (projectType) {
+		case 'cuneiform':
+			options.nodes.font = {face: 'cuneiform'};
+			centralNodeFont = 'cuneiform';
+			break;
+		case 'hieroglyphic':
+			// Use Roboto for the lemma and hierofont for classifiers.
+			options.nodes.font = {face: 'hierofont'};
+			centralNodeFont = 'Roboto';
+			break;
+		case 'chinese':
+			options.nodes.font = {face: 'Noto Sans TC'};
+			centralNodeFont = 'Noto Sans TC';			
+			break;
+		default:
+			break;
+	}
+
+	new vis.Network(container, graphData, options);
+
+	let lemmaString = '';
+	if (lemmaData[lemma] !== undefined) {
+		lemmaString = lemmaData[lemma].transliteration;
+		if (lemmaData[lemma].meaning !== '' && lemmaData[lemma].meaning !== null)
+			lemmaString = lemmaString + `\n(${lemmaData[lemma].meaning})`;
+	}
+	nodes.add({id: 1, label: lemmaString, color: {background: 'lightgreen'},
+		font: {face: centralNodeFont}});
+
+	let radius = 10;
+
+	for (const clfKey in clfDict) {
+		if (!clfDict.hasOwnProperty(clfKey))
+			continue;
+
+		const count      = clfDict[clfKey],
+			boundCounter = idCounter;
+
+		// The second case checks that the glyph is already a hieroglyph
+		if (projectType !== 'hieroglyphic' || clfKey.codePointAt(0) >= 256) {
+			// Don't need to download stuff
+			nodes.add({id: boundCounter, label: clfKey, color: '#b0c0ff', size: radius});
+		} else {
+			try {
+				const response = await fetch(
+					'https://www.iclassifier.pw/api/jseshrender/?height=100&centered=true&mdc=' + clfKey
+				);
+				if (!response.ok) {
+					// Failed to visualise MdC
+					console.log(`Failed to visualise MDC for ${clfKey}`);
+					nodes.add({
+						id: boundCounter,
+						label: clfKey,
+						color: '#b0c0ff',
+						size: radius
+					});
+				} else {
+					const base64 = await response.text();
+					nodes.add({
+						id: boundCounter,
+						shape: 'image',
+						image: 'data:image/png;base64,' + base64,
+						size: radius,
+						shapeProperties: {
+							useBorderWithImage: true,
+							interpolation: true
+						},
+						color: '#b0c0ff',
+					});
+				}
+			} catch (err) {
+				console.log(`Failed to visualise MDC for ${clfKey}`);
+				nodes.add({
+					id: boundCounter,
+					label: clfKey,
+					color: '#b0c0ff',
+					size: radius
+				});
+			}
+		}
+		edges.add({
+			from: 1,
+			to: boundCounter,
+			width: count,
+			length: 5.0 / count,
+			color: '#b0c0ff'
+		});
+		idCounter++;
+	}
 }
 			

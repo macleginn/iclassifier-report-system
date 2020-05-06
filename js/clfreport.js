@@ -105,6 +105,7 @@ function getClfReport(mdc) {
 	clfDict = {};
 	comDict = {};
 	lemDict = {};
+	lemMean = {};
 	posDict = {};
 	ordDict = {};
 	scrDict = {};
@@ -158,6 +159,7 @@ function getClfReport(mdc) {
 			if (!lemDict.hasOwnProperty(key1))
 				lemDict[key1] = 0;
 			lemDict[key1]++;
+			lemMean[key1] = lemmaData[lemmaID].meaning;
         }
 
 		// Script co-occurrence stats
@@ -204,19 +206,24 @@ async function drawLemmaGraph(clf) {
 			edges: edges
 		},
 		options = {
-			nodes: { size: 40 }
+			nodes: { size: 40 },
 		},
 		container = document.getElementById('canvas1');
 	
+	let centralNodeFont;
 	switch (projectType) {
 		case 'cuneiform':
 			options.nodes.font = {face: 'cuneiform'};
+			centralNodeFont = 'cuneiform';
 			break;
 		case 'hieroglyphic':
-			options.nodes.font = {face: 'hierofont'};
+			// Use Roboto for lemmas and hierofont for the classifier.
+			options.nodes.font = {face: 'Roboto'};
+			centralNodeFont = 'hierofont';
 			break;
 		case 'chinese':
 			options.nodes.font = {face: 'Noto Sans TC'};
+			centralNodeFont = 'Noto Sans TC';			
 			break;
 		default:
 			break;
@@ -248,16 +255,25 @@ async function drawLemmaGraph(clf) {
 				nodes.add(centreNode);
 			}
 		} catch(err) {
-			nodes.add({id: 1, label: clf, color: {background: 'beige'}});
+			nodes.add({id: 1, label: clf, color: {background: 'beige'},
+			font: {face: centralNodeFont}});
 		}
 	} else 
-		nodes.add({id: 1, label: baseGlyph, color: 'beige'});
+		nodes.add({id: 1, label: baseGlyph, color: {background: 'beige'},
+			font: {face: centralNodeFont}});
 
 	// Populate the lemma graph
 	for (const lemma in lemDict) {
 		if (!lemDict.hasOwnProperty(lemma))
 			continue;
-		nodes.add({id: idCounter, label: lemma.split(' ')[0], shape: 'circle', color: 'lightgreen'});
+		const meaningWords = lemMean[lemma].split(' '),
+			shortMeaning = meaningWords.slice(0, 4).join(' ');
+		nodes.add({
+			id: idCounter, 
+			label: `${lemma.split(' ')[0]}\n(${shortMeaning})`, 
+			shape: 'circle', 
+			color: 'rgba(0, 255, 0, 0.4)'
+		});
 		edges.add({from: 1, to: idCounter, color: 'gray', width: lemDict[lemma]});
 		idCounter++;
 	}
