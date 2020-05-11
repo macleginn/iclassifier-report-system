@@ -26,9 +26,9 @@ let lemmaReport = {
 					{
 						style: {width: '400px'},
 						onchange: e => {
+							tokenDisplayType = 'all';
 							getLemmaReport(parseInt(e.target.value));
 							lemmaReport.currentLemma = parseInt(e.target.value);
-							tokenDisplayType = 'all';
 						},
 						value: lemmaReport.currentLemma
 					},
