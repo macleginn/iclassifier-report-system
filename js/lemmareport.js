@@ -1,3 +1,5 @@
+let tokenDisplayType = 'all';  // Other possible values: 'simple', 'compound'
+
 let lemmaReport = {
 	currentLemma: '---',
 	lemmaArr: [],
@@ -25,7 +27,8 @@ let lemmaReport = {
 						style: {width: '400px'},
 						onchange: e => {
 							getLemmaReport(parseInt(e.target.value));
-							lemmaReport.currentLemma = e.target.value;
+							lemmaReport.currentLemma = parseInt(e.target.value);
+							tokenDisplayType = 'all';
 						},
 						value: lemmaReport.currentLemma
 					},
@@ -41,6 +44,26 @@ let lemmaReport = {
 								lemmaData[lemmaTuple[0]].meaning
 							})`
 						)))
+				),
+
+				m('br'),				
+				m('h4', 'Report token types:'),
+				m('br'),
+				m(
+					'select',
+					{
+						value: tokenDisplayType,
+						style: {width: '400px'},
+						onchange: e => { 
+							tokenDisplayType = e.target.value;
+							getLemmaReport(lemmaReport.currentLemma);
+						}
+					},
+					[
+						m('option', {value: 'all'}, 'All'),
+						m('option', {value: 'simple'}, 'Simple tokens'),
+						m('option', {value: 'compound'}, 'Compound tokens')
+					]
 				),
 
 				m(lemmaMap, {lemma: lemmaReport.currentLemma}),
@@ -106,7 +129,12 @@ function getTokensForLemma(lemma) {
 	let result = [];
 	for (const key in tokenData)
 		if (tokenData.hasOwnProperty(key) && tokenData[key].lemma_id === lemma)
-			result.push(key);
+			if (tokenDisplayType === 'all')
+				result.push(key);
+			else if (tokenDisplayType === 'compound' && compoundTokens.has(key))
+				result.push(key);
+			else if (tokenDisplayType === 'simple' && !compoundTokens.has(key))
+				result.push(key);
 	return result;
 }
 
@@ -153,6 +181,12 @@ function getLemmaReport(lemma) {
 
 	for (const key in tokenData) {
 		if (tokenData.hasOwnProperty(key) && tokenData[key].lemma_id === lemma) {
+			if (tokenDisplayType === 'compound' && !compoundTokens.has(key)) {
+				continue;
+			} else if (tokenDisplayType === 'simple' && compoundTokens.has(key)) {
+				continue;
+			}
+
 			let clfArr = extractClfsFromString(tokenData[key].mdc_w_markup);
 			if (projectType === 'hieroglyphic')
 				clfArr = clfArr.map(c => mdc2glyph(c));
