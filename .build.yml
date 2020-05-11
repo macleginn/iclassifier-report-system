@@ -1,0 +1,14 @@
+image: alpine/edge
+packages:
+  - rsync
+sources:
+  - https://git.sr.ht/~macleginn/iclassifier-report-system
+environment:
+  deploy: iclassifier@108.174.195.228
+secrets:
+  - caecf62a-e8f5-4f8e-b03c-695360191d64
+tasks:
+  - deploy: |
+      cd classifier-report-system
+      sshopts="ssh -o StrictHostKeyChecking=no"
+      rsync --rsh="$sshopts" -a ./ $deploy:/var/www/static/new-reports
