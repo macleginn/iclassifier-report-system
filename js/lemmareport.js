@@ -1,4 +1,4 @@
-let tokenDisplayType = 'all';  // Other possible values: 'simple', 'compound'
+let tokenDisplayType = 'all';  // Other possible values: 'standalone', 'compound-part'
 
 let lemmaReport = {
 	currentLemma: '---',
@@ -61,8 +61,8 @@ let lemmaReport = {
 					},
 					[
 						m('option', {value: 'all'}, 'All'),
-						m('option', {value: 'simple'}, 'Simple tokens'),
-						m('option', {value: 'compound'}, 'Compound tokens')
+						m('option', {value: 'standalone'}, 'Standalone tokens'),
+						m('option', {value: 'compound-part'}, 'Parts of compounds')
 					]
 				),
 
@@ -131,9 +131,9 @@ function getTokensForLemma(lemma) {
 		if (tokenData.hasOwnProperty(key) && tokenData[key].lemma_id === lemma)
 			if (tokenDisplayType === 'all')
 				result.push(key);
-			else if (tokenDisplayType === 'compound' && compoundTokens.has(key))
+			else if (tokenDisplayType === 'standalone' && !compoundParts.has(key))
 				result.push(key);
-			else if (tokenDisplayType === 'simple' && !compoundTokens.has(key))
+			else if (tokenDisplayType === 'compound-part' && compoundParts.has(key))
 				result.push(key);
 	return result;
 }
@@ -181,9 +181,9 @@ function getLemmaReport(lemma) {
 
 	for (const key in tokenData) {
 		if (tokenData.hasOwnProperty(key) && tokenData[key].lemma_id === lemma) {
-			if (tokenDisplayType === 'compound' && !compoundTokens.has(key)) {
+			if (tokenDisplayType === 'compound-part' && !compoundParts.has(key)) {
 				continue;
-			} else if (tokenDisplayType === 'simple' && compoundTokens.has(key)) {
+			} else if (tokenDisplayType === 'standalone' && compoundParts.has(key)) {
 				continue;
 			}
 

@@ -11,6 +11,7 @@ let project          = null,
 
 let tokenData      = null,
 	compoundTokens = null,
+	compoundParts  = null,
 	clfArr         = [],
 	lemmaData      = null,
 	witnessData    = null;
@@ -159,6 +160,18 @@ function filterCompoundTokens() {
 	}
 }
 
+
+function filterCompoundParts() {
+	compoundParts = new Set();
+	for (const key in tokenData) {
+		if (!tokenData.hasOwnProperty(key))
+			continue;
+		if (tokenData[key].compound_id !== null &&
+			tokenData[key].compound_id !== '')
+			compoundParts.add(key);
+	}
+}
+
 function normaliseScript(scriptId) {
 	switch (scriptId) {
 		case 'thot-71':
@@ -200,6 +213,7 @@ async function switchProject(element) {
 	}
 	tokenData = await response.json();
 	filterCompoundTokens();
+	filterCompoundParts();
 
 	// Extract classifiers
 	let clfSet = new Set();
