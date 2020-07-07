@@ -10,6 +10,7 @@ let project          = null,
 	showMap          = false;
 
 let tokenData      = null,
+    clfData		   = null,
 	compoundTokens = null,
 	compoundParts  = null,
 	clfArr         = [],
@@ -36,7 +37,7 @@ let statsDiv = {
 		else {
 			let sortedLemmaCounts = sortCounterDesc(dict);
 			return m('div', m(statsTable, {
-				data: sortedLemmaCounts, 
+				data: sortedLemmaCounts,
 				font: font,
 				header: header
 			}))
@@ -62,17 +63,17 @@ let statsTable = {
 				'tr',
 				{style: {'border-bottom': '1px dotted black'}},
 				[
-					m('th', 
+					m('th',
 						{style: {
 							width: '570px',
-							'text-align': 'left'}}, 
+							'text-align': 'left'}},
 						header),
 					m('th', {style: {'text-align': 'left'}}, 'Count')
 				]
 			)
 		].concat(
 			rows.map(row => m(
-				'tr', 
+				'tr',
 				[m('td', {class: cssClass}, row[0]), m('td', row[1])]
 			)))
 		);
@@ -156,7 +157,7 @@ function filterCompoundTokens() {
 			continue;
 		const compoundId = tokenData[key].compound_id;
 		if (compoundId !== null && compoundId !== "")
-			compoundTokens.add(compoundId);	
+			compoundTokens.add(compoundId);
 	}
 }
 
@@ -184,7 +185,7 @@ function normaliseScript(scriptId) {
 			return scriptId;
 	}
 }
-	
+
 
 async function switchProject(element) {
 	showClfReports   = false;
@@ -204,7 +205,7 @@ async function switchProject(element) {
 	const fields     = element.value.split('|'),
 		  newProject = fields[0];
 	projectType = fields[1];
-	
+
 	let response = await fetch(`${requestURL}/${newProject}/tokens/all`);
 	if (!response.ok) {
 		const message = await response.text();
@@ -214,6 +215,14 @@ async function switchProject(element) {
 	tokenData = await response.json();
 	filterCompoundTokens();
 	filterCompoundParts();
+
+	response = await fetch(`${requestURL}/${newProject}/clf_parses/all`);
+	if (!response.ok) {
+		const message = await response.text();
+		alert("Failed to download classifier info from the server: " + message);
+		return;
+	}
+	clfData = await response.json();
 
 	// Extract classifiers
 	let clfSet = new Set();
