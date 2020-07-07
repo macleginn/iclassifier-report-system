@@ -3,6 +3,10 @@ let map = {
 		return m(
 			'div',
 			{style: {display: showMap ? 'block' : 'none'}},
-			'Map');
+			[
+				m('span', 'Under construction. See '),
+				m('a', {href: 'https://www.iclassifier.pw/ui/'}, 'the alpha version'),
+				m('span', '.')
+			]);
 	}
 }
