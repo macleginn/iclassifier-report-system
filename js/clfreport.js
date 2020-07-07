@@ -1,19 +1,42 @@
+const selectStyle = {
+	width: '150px',
+	'font-size': '16pt',
+	height: '50px'
+};
+
+const clfTypeArr = [
+	['any', 'Any'],
+	['taxonomic', 'Taxonomic'],
+	['taxonomic_repeater', 'Taxonomic repeater'],
+	['taxonomic_metaphoric', 'Taxonomic metaphoric'],
+	['schematic', 'Schematic'],
+	['unclear', 'Unclear']
+];
+
+const clfLevelArr = [
+	['any', 'Any'],
+	[1, 'Lexical'],
+	[2, 'Pragmatic'],
+	[3, 'Derivational'],
+	[4, 'Metatextual'],
+	[5, 'Phonetic (incl. false etymology)']
+];
+
 let clfReport = {
 	currentClf: '---',
+	clfType: 'any',
+	clfLevel: 'any',
 	view: () => {
 		return m(
 			'div',
 			{style: {display: showClfReports ? 'block' : 'none', 'padding-top': '0'}},
 			[
-				m('h4', 'Select a classifier:'),
+				m('h4', 'Select a classifier: '),
+				m('br'),
 				m(
 					'select',
 					{
-						style: {
-							width: '150px',
-							'font-size': '16pt',
-							height: '50px'
-						},
+						style: selectStyle,
 						onchange: e => {
 							getClfReport(e.target.value);
 							clfReport.currentClf = e.target.value;
@@ -22,6 +45,48 @@ let clfReport = {
 					},
 					[m('option', {disabled: true, value: '---'}, '---')]
 						.concat(clfArr.map(clf => m('option', clf)))
+				),
+
+				m('br'),
+				m('h4', 'Subset by type:'),
+				m('br'),
+				m(
+					'select',
+					{
+						style: selectStyle,
+						onchange: e => {
+							getClfReport(e.target.value);
+							clfReport.clfType = e.target.value;
+							if (clfReport.currentClf !== '---')
+								getClfReport(clfReport.currentClf);
+						},
+						value: clfReport.clfType
+					},
+					clfTypeArr.map(typeTuple => m(
+						'option',
+						{value: typeTuple[0]},
+						typeTuple[1]))
+				),
+
+				m('br'),
+				m('h4', 'Subset by level:'),
+				m('br'),
+				m(
+					'select',
+					{
+						style: selectStyle,
+						onchange: e => {
+							getClfReport(e.target.value);
+							clfReport.clfLevel = e.target.value;
+							if (clfReport.currentClf !== '---')
+								getClfReport(clfReport.currentClf);
+						},
+						value: clfReport.clfLevel
+					},
+					clfLevelArr.map(levelTuple => m(
+						'option',
+						{value: levelTuple[0]},
+						levelTuple[1]))
 				),
 
 				// The report components
@@ -37,7 +102,7 @@ let clfReport = {
 let clfLemmaMap = {
 	onupdate: vnode => {
 		if (vnode.attrs.clf !== '---') {
-			console.log('Drawing the lemma graph.');			
+			console.log('Drawing the lemma graph.');
 			drawLemmaGraph(vnode.attrs.clf);
 		}
 	},
@@ -46,9 +111,9 @@ let clfLemmaMap = {
 		m('div#canvas1', {style: {
 			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
 		}}),
-		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas1');}}, 
+		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas1');}},
 			'Switch background color'),
-		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas1');}}, 
+		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas1');}},
 			'Go full screen')
 	])
 }
@@ -65,9 +130,9 @@ let clfClfMap = {
 		m('div#canvas2', {style: {
 			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
 		}}),
-		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas2')}}, 
+		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas2')}},
 			'Switch background color'),
-		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas2')}}, 
+		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas2')}},
 			'Go full screen')
 	])
 }
@@ -100,7 +165,7 @@ function getClfMDC (mdc) {
 }
 
 function getClfReport(mdc) {
-	mdc = getClfMDC(mdc);	
+	mdc = getClfMDC(mdc);
 
 	clfDict = {};
 	comDict = {};
@@ -119,6 +184,38 @@ function getClfReport(mdc) {
 			clfs = extractClfsFromString(tokenInfo.mdc_w_markup);
 
 		if (clfs.indexOf(mdc) === -1)
+			continue;
+
+		// Get parsed data
+		let clfParse = {
+			clf_level: null,
+			clf_type: null
+		};
+		for (const clfParseKey in clfData)
+			if (
+				clfData.hasOwnProperty(clfParseKey) &&
+				clfData[clfParseKey].token_id == key &&
+				clfData[clfParseKey].gardiner_number === mdc
+			) {
+				clfParse = JSON.parse(JSON.stringify(clfData[clfParseKey]));
+				break;
+			}
+
+		// If any subsetting was asked for, only
+		// parsed classifiers will be shown.
+		if (
+			clfReport.clfLevel != 'any' &&
+			clfReport.clfLevel != clfParse.clf_level
+		)
+			continue;
+
+		let types = new Set();
+		for (const clfType of String(clfParse.clf_type).split(';'))
+			types.add(clfType);
+		if (
+			clfReport.clfType != 'any' &&
+			!types.has(clfReport.clfType)
+		)
 			continue;
 
 		let glyphs = clfs.map(x => x);
@@ -187,7 +284,7 @@ function getClfReport(mdc) {
 		}
     }
 	// Done, draw the maps.
-	
+
 }
 
 async function drawLemmaGraph(clf) {
@@ -209,7 +306,7 @@ async function drawLemmaGraph(clf) {
 			nodes: { size: 40 },
 		},
 		container = document.getElementById('canvas1');
-	
+
 	let centralNodeFont;
 	switch (projectType) {
 		case 'cuneiform':
@@ -223,7 +320,7 @@ async function drawLemmaGraph(clf) {
 			break;
 		case 'chinese':
 			options.nodes.font = {face: 'Noto Sans TC'};
-			centralNodeFont = 'Noto Sans TC';			
+			centralNodeFont = 'Noto Sans TC';
 			break;
 		default:
 			break;
@@ -258,7 +355,7 @@ async function drawLemmaGraph(clf) {
 			nodes.add({id: 1, label: clf, color: {background: 'beige'},
 			font: {face: centralNodeFont}});
 		}
-	} else 
+	} else
 		nodes.add({id: 1, label: baseGlyph, color: {background: 'beige'},
 			font: {face: centralNodeFont}});
 
@@ -269,9 +366,9 @@ async function drawLemmaGraph(clf) {
 		const meaningWords = lemMean[lemma].split(' '),
 			shortMeaning = meaningWords.slice(0, 4).join(' ');
 		nodes.add({
-			id: idCounter, 
-			label: `${lemma.split(' ')[0]}\n(${shortMeaning})`, 
-			shape: 'circle', 
+			id: idCounter,
+			label: `${lemma.split(' ')[0]}\n(${shortMeaning})`,
+			shape: 'circle',
 			color: 'rgba(0, 255, 0, 0.4)'
 		});
 		edges.add({from: 1, to: idCounter, color: 'gray', width: lemDict[lemma]});
@@ -282,13 +379,13 @@ async function drawLemmaGraph(clf) {
 
 async function drawClfGraph(clf) {
 	console.log('Inside drawClfGraph');
-	
+
 	let idCounter = 2; // Centre nodes have id = 1.
 
 	const mdc = getClfMDC(clf),
 		baseGlyph = mdc2glyph(mdc),
 		radius = 10;
-	
+
 	let nodes = new vis.DataSet(),
 		edges = new vis.DataSet(),
 		graphData = {
@@ -351,7 +448,7 @@ async function drawClfGraph(clf) {
 		} catch(err) {
 			nodes.add({id: 1, label: clf, color: {background: 'beige'}});
 		}
-	} else 
+	} else
 		nodes.add({id: 1, label: baseGlyph, color: 'beige'});
 
 	for (const clfKey in clfDict) {
