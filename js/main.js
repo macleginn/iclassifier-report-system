@@ -5,9 +5,33 @@ const authURL    = 'https://www.iclassifier.pw/api/authserver',
 let project          = null,
 	projectType      = null,
 	downloadingData  = false,
+	showClfQueries   = false,
 	showClfReports   = false,
 	showLemmaReports = false,
 	showMap          = false;
+
+function setMenu(menuName) {
+	showClfQueries   = false;
+	showClfReports   = false;
+	showLemmaReports = false;
+	showMap          = false;
+	switch (menuName) {
+		case 'clfQueries':
+			showClfQueries = true;
+			break;
+		case 'clfReports':
+			showClfReports = true;
+			break;
+		case 'lemmaReports':
+			showLemmaReports = true;
+			break;
+		case 'map':
+			showMap = true;
+			break;
+		default:
+			break;
+	}
+}
 
 let tokenData      = null,
     clfData		   = null,
@@ -169,7 +193,7 @@ function filterCompoundParts() {
 			continue;
 		if (tokenData[key].compound_id !== null &&
 			tokenData[key].compound_id !== '')
-			compoundParts.add(key);
+			compoundParts.add(parseInt(key));
 	}
 }
 
@@ -188,9 +212,7 @@ function normaliseScript(scriptId) {
 
 
 async function switchProject(element) {
-	showClfReports   = false;
-	showLemmaReports = false;
-	showMap          = false;
+	setMenu(null);
 	clfReport.currentClf     = '---';
 	lemmaReport.currentLemma = '---';
 
@@ -265,29 +287,28 @@ async function switchProject(element) {
 	m.redraw();
 }
 
+function toggleClfQueries() {
+	setMenu('clfQueries');
+	m.redraw();
+}
+
 function toggleClfReport() {
 	clfReport.currentClf     = '---';
 	byID('canvas1').innerHTML = '';
 	byID('canvas2').innerHTML = '';
-	showClfReports   = true;
-	showLemmaReports = false;
-	showMap          = false;
+	setMenu('clfReports');
 	m.redraw();
 }
 
 function toggleLemmaReport() {
 	lemmaReport.currentLemma = '---';
 	byID('canvas').innerHTML = '';
-	showClfReports   = false,
-	showLemmaReports = true,
-	showMap          = false;
+	setMenu('lemmaReports');
 	m.redraw();
 }
 
 function toggleMap() {
-	showClfReports   = false,
-	showLemmaReports = false,
-	showMap          = true;
+	setMenu('map');
 	m.redraw();
 }
 

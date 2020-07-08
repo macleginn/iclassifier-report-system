@@ -6,6 +6,10 @@ let report = {
 				m('div#button-row', [
 					m('button', {
 						disabled: project === null,
+						onclick: toggleClfQueries
+					}, 'Show classifier queries'),
+					m('button', {
+						disabled: project === null,
 						onclick: toggleClfReport
 					}, 'Show classifier reports'),
 					m('button', {
@@ -28,6 +32,8 @@ let report = {
 					},
 					m('span', 'Fetching data...')
 				),
+
+				m(clfQueries),
 
 				m(clfReport),
 
