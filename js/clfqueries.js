@@ -1,5 +1,10 @@
 let clfCounts = {};
 
+let selectLabelStyle = {
+    'display': 'inline-block',
+    'width': '100px'
+};
+
 let clfQueries = {
     clfType: 'any',
     clfLevel: 'any',
@@ -22,6 +27,17 @@ let clfQueries = {
                     'padding-top': '0'}
             },
             [
+                m('h3', 'Subset by'),
+                m('h4', {style: selectLabelStyle}, 'Script'),
+                getSelectFromThesaurus('scripts', e => {
+                    clfQueries.script = e.target.value;
+                }),
+                m('br'),
+                m('h4', {style: selectLabelStyle}, 'Genre'),
+                getSelectFromThesaurus('genres', e => {
+                    clfQueries.genre = e.target.value;
+                }),
+                m('br'),
                 m('h4', `${getTypes(clfCounts)} classifier types and ${getTokens(clfCounts)} classifier tokens`)
             ]
         )
