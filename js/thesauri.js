@@ -1,3 +1,38 @@
+// Classifier thesauri: the order of elements in tuples
+// is value, title
+
+const clfTypeArr = [
+	['any', 'Any'],
+	['taxonomic', 'Taxonomic'],
+	['taxonomic_repeater', 'Taxonomic repeater'],
+	['taxonomic_metaphoric', 'Taxonomic metaphoric'],
+	['schematic', 'Schematic'],
+	['unclear', 'Unclear']
+];
+
+const clfLevelArr = [
+	['any', 'Any'],
+	[1, 'Lexical'],
+	[2, 'Pragmatic'],
+	[3, 'Derivational'],
+	[4, 'Metatextual'],
+	[5, 'Phonetic (incl. false etymology)']
+];
+
+function arr2Select(arr, style, onchange) {
+    return m(
+        'select',
+        {style: style, onchange: onchange},
+        arr.map(tuple => m(
+            'option',
+            {value: tuple[0]},
+            tuple[1]))
+    )
+}
+
+// Witness thesauri: the order of elements in tuples
+// is title, value
+
 const chineseScripts = [
     ["Oracle bones inscriptions", "Oracle bones inscriptions"],
     ["Bronze inscriptions", "Bronze inscriptions"],
@@ -227,10 +262,10 @@ const thesauriDict = {
     }
 };
 
-function thesaurus2Select(thesaurus, onchange) {
+function thesaurus2Select(thesaurus, style, onchange) {
     return m(
         'select',
-        {style: {width: '150px'}, onchange: onchange},
+        {style: style, onchange: onchange},
         [['Any', 'any']]
             .concat(thesaurus)
             .map(tuple => m(
@@ -240,13 +275,14 @@ function thesaurus2Select(thesaurus, onchange) {
     )
 }
 
-function getSelectFromThesaurus(thesaurusName, onchange) {
+function getSelectFromThesaurus(thesaurusName, style, onchange) {
     try {
         return thesaurus2Select(
             thesauriDict[projectType][thesaurusName],
+            style,
             onchange);
     } catch (error) {
-        return thesaurus2Select([], onchange);
+        return thesaurus2Select([], style, onchange);
     }
 }
 

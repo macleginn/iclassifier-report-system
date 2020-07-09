@@ -1,26 +1,10 @@
 const selectStyle = {
 	width: '150px',
-	'font-size': '16pt',
-	height: '50px'
+	// 'font-size': '16pt',
+	// height: '50px'
 };
 
-const clfTypeArr = [
-	['any', 'Any'],
-	['taxonomic', 'Taxonomic'],
-	['taxonomic_repeater', 'Taxonomic repeater'],
-	['taxonomic_metaphoric', 'Taxonomic metaphoric'],
-	['schematic', 'Schematic'],
-	['unclear', 'Unclear']
-];
 
-const clfLevelArr = [
-	['any', 'Any'],
-	[1, 'Lexical'],
-	[2, 'Pragmatic'],
-	[3, 'Derivational'],
-	[4, 'Metatextual'],
-	[5, 'Phonetic (incl. false etymology)']
-];
 
 let clfReport = {
 	currentClf: '---',

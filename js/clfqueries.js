@@ -1,9 +1,10 @@
 let clfCounts = {};
 
-let selectLabelStyle = {
-    'display': 'inline-block',
-    'width': '100px'
-};
+let selectStyleQuery = {width: '150px'},
+    selectLabelStyle = {
+        'display': 'inline-block',
+        'width': '100px'
+    };
 
 let clfQueries = {
     clfType: 'any',
@@ -28,13 +29,23 @@ let clfQueries = {
             },
             [
                 m('h3', 'Subset by'),
+                m('h4', {style: selectLabelStyle}, 'Level'),
+                arr2Select(clfLevelArr, selectStyleQuery, e => {
+                    clfQueries.clfLevel = e.target.value;
+                }),
+                m('br'),
+                m('h4', {style: selectLabelStyle}, 'Type'),
+                arr2Select(clfTypeArr, selectStyleQuery, e => {
+                    clfQueries.clfType = e.target.value;
+                }),
+                m('br'),
                 m('h4', {style: selectLabelStyle}, 'Script'),
-                getSelectFromThesaurus('scripts', e => {
+                getSelectFromThesaurus('scripts', selectStyle, e => {
                     clfQueries.script = e.target.value;
                 }),
                 m('br'),
                 m('h4', {style: selectLabelStyle}, 'Genre'),
-                getSelectFromThesaurus('genres', e => {
+                getSelectFromThesaurus('genres', selectStyle, e => {
                     clfQueries.genre = e.target.value;
                 }),
                 m('br'),
