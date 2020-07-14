@@ -63,7 +63,7 @@ select {
 div#main {
     padding-left: 20px;
     font-family: 'Roboto', sans-serif;
-}	
+}
 
 div#report-main {
 	margin: 15px;
@@ -93,4 +93,9 @@ table.stats tr:nth-child(odd) {
 
 table.stats tr {
 	padding: 5px;
+}
+
+.clf-span:hover {
+	color: red;
+	cursor: pointer;
 }

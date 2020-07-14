@@ -292,8 +292,12 @@ function toggleClfQueries() {
 	m.redraw();
 }
 
-function toggleClfReport() {
-	clfReport.currentClf     = '---';
+function toggleClfReport(clf2Report) {
+	console.log(clf2Report);
+	if (clf2Report === undefined)
+		clfReport.currentClf = '---';
+	else
+		clfReport.currentClf = clf2Report;
 	byID('canvas1').innerHTML = '';
 	byID('canvas2').innerHTML = '';
 	setMenu('clfReports');

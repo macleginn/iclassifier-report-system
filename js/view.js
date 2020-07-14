@@ -10,7 +10,8 @@ let report = {
 					}, 'Show classifier queries'),
 					m('button', {
 						disabled: project === null,
-						onclick: toggleClfReport
+						// So that we do not pass the event as the parameter.
+						onclick: () => { toggleClfReport(); }
 					}, 'Show classifier reports'),
 					m('button', {
 						disabled: project === null,

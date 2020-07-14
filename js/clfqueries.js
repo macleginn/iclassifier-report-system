@@ -49,7 +49,15 @@ let clfQueries = {
                     clfQueries.genre = e.target.value;
                 }),
                 m('br'),
-                m('h4', `${getTypes(clfCounts)} classifier types and ${getTokens(clfCounts)} classifier tokens`)
+                m('h4', `${getTypes(clfCounts)} classifier types and ${getTokens(clfCounts)} classifier tokens`),
+                m('br'),
+                m('div', {style: {
+                    width: '640px',
+                    height: '480px',
+                    padding: '4px',
+                    'background-color': 'white',
+                    border: '1px solid black'
+                }}, extractSpans(clfCounts))
             ]
         )
     }
@@ -174,4 +182,34 @@ function populateClfDict() {
             clfCounts[clf]++;
         }
     }
+}
+
+function extractSpans(counter) {
+    let result = [];
+    for (const key in counter)
+        if (counter.hasOwnProperty(key))
+            result.push([key, counter[key]]);
+    result.sort((a, b) => {
+        if (a[1] > b[1])
+            return -1;
+        else if (a[1] < b[1])
+            return 1;
+        else
+            return 0;
+    })
+    return result.map(el => m(
+        'span.clf-span',
+        {style: {
+            padding: '2px',
+            margin: '2px',
+            border: '1px dotted black',
+            'border-radius': '2px',
+            'background-color': '#ffeecc',
+            display: 'inline-block'
+        },
+        onclick: () => {
+            getClfReport(el[0]);
+            toggleClfReport(el[0]);
+        }},
+        `${el[0]}: ${el[1]}`));
 }

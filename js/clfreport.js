@@ -28,7 +28,10 @@ let clfReport = {
 						value: clfReport.currentClf
 					},
 					[m('option', {disabled: true, value: '---'}, '---')]
-						.concat(clfArr.map(clf => m('option', clf)))
+						.concat(clfArr.map(clf => m(
+							'option',
+							{value: getClfMDC(clf)},
+							clf)))
 				),
 
 				m('br'),
@@ -140,7 +143,8 @@ let clfStats = {
 	}
 }
 
-function getClfMDC (mdc) {
+function getClfMDC(mdc) {
+	console.log(mdc);
 	const parensRegex = /\((.+)\)/;
 	if (mdc.match(parensRegex))
 		return mdc.match(parensRegex)[1].trim();
@@ -272,6 +276,7 @@ function getClfReport(mdc) {
 }
 
 async function drawLemmaGraph(clf) {
+	console.log(clf);
 	let idCounter = 2; // Centre nodes have id = 1.
 	const mdc = getClfMDC(clf),
 		baseGlyph = mdc2glyph(mdc),
