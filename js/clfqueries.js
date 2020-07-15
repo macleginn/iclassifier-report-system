@@ -56,7 +56,8 @@ let clfQueries = {
                     height: '480px',
                     padding: '4px',
                     'background-color': 'white',
-                    border: '1px solid black'
+                    border: '1px solid black',
+                    overflow: 'auto'
                 }}, extractSpans(clfCounts))
             ]
         )
