@@ -163,9 +163,9 @@ function getTokensForLemma(lemma) {
 		if (tokenData.hasOwnProperty(key) && tokenData[key].lemma_id === lemma)
 			if (tokenDisplayType === 'all')
 				result.push(key);
-			else if (tokenDisplayType === 'standalone' && !compoundParts.has(key))
+			else if (tokenDisplayType === 'standalone' && !compoundParts.has(parseInt(key)))
 				result.push(key);
-			else if (tokenDisplayType === 'compound-part' && compoundParts.has(key))
+			else if (tokenDisplayType === 'compound-part' && compoundParts.has(parseInt(key)))
 				result.push(key);
 	return result;
 }
@@ -213,9 +213,9 @@ function getLemmaReport(lemma) {
 
 	for (const key in tokenData) {
 		if (tokenData.hasOwnProperty(key) && tokenData[key].lemma_id === lemma) {
-			if (tokenDisplayType === 'compound-part' && !compoundParts.has(key)) {
+			if (tokenDisplayType === 'compound-part' && !compoundParts.has(parseInt(key))) {
 				continue;
-			} else if (tokenDisplayType === 'standalone' && compoundParts.has(key)) {
+			} else if (tokenDisplayType === 'standalone' && compoundParts.has(parseInt(key))) {
 				continue;
 			}
 
