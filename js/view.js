@@ -11,16 +11,18 @@ let report = {
 					m('button', {
 						disabled: project === null,
 						// So that we do not pass the event as the parameter.
-						onclick: () => { toggleClfReport(); }
+						onclick: () => { toggleClfReport(); },
+						style: {'margin-left': '5px'}
 					}, 'Show classifier reports'),
 					m('button', {
 						disabled: project === null,
 						onclick: toggleLemmaReport,
-						style: {'margin-left': '5px', 'margin-right': '5px'}
+						style: {'margin-left': '5px'}
 					}, 'Show lemma reports'),
 					m('button', {
 						disabled: project === null,
-						onclick: toggleMap
+						onclick: toggleMap,
+						style: {'margin-left': '5px'}
 					}, 'Show classifier map')
 				]),
 
