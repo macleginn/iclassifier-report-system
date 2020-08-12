@@ -1,9 +1,12 @@
 let tokenDisplayType = 'all';  // Other possible values: 'standalone', 'compound-part'
 
+let lemmaFilterDict = {};
+
 let lemmaReport = {
 	currentLemma: '---',
 	lemmaArr: [],
 	view: () => {
+		console.log('Showing the lemma report.');
 		let tokenCounts = {};
 		for (const key in tokenData)
 			if (tokenData.hasOwnProperty(key)) {
@@ -44,7 +47,36 @@ let lemmaReport = {
 								lemmaData[lemmaTuple[0]].meaning
 							})`
 						)))
-				),
+				), m('br'), m('br'),
+				m(listMenu, {
+					menuName: 'lemma-search-menu',
+					dataList: lemmaReport.lemmaArr,
+					filterDict: lemmaFilterDict,
+					filterFunction: (tuple, containerID) => {
+						const lemmaID = parseInt(tuple[0]),
+							transliteration = lemmaData[lemmaID] === undefined ? 'unknown' : lemmaData[lemmaID].transliteration,
+							meaning         = lemmaData[lemmaID] === undefined ? 'unknown' : lemmaData[lemmaID].meaning;
+						let test = get(lemmaFilterDict, containerID, '').toLowerCase();
+						return (transliteration + meaning).toLowerCase().indexOf(test) >= 0;
+					},
+					divBuilderCallback: tuple => {
+						const lemmaID = parseInt(tuple[0]),
+							transliteration = lemmaData[lemmaID] === undefined ? 'unknown' : lemmaData[lemmaID].transliteration,
+							meaning         = lemmaData[lemmaID] === undefined ? 'unknown' : lemmaData[lemmaID].meaning;
+						let button = document.createElement('div');
+						button.innerText = `${tuple[1]}: ${transliteration} (${meaning})`;
+						button.classList.add('menu-button-value');
+						button.onclick = () => {
+							byID('lemma-search-menu').style.display = 'none';
+							tokenDisplayType = 'all';
+							getLemmaReport(lemmaID);
+							lemmaReport.currentLemma = lemmaID;
+							m.redraw();
+						}
+						return button;
+					}
+				}),
+				m(listMenuButton, { menuName: 'lemma-search-menu' }),
 
 				m('br'),				
 				m('h4', 'Report token types:'),

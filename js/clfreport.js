@@ -144,7 +144,7 @@ let clfStats = {
 }
 
 function getClfMDC(mdc) {
-	console.log(mdc);
+	// console.log(mdc);
 	const parensRegex = /\((.+)\)/;
 	if (mdc.match(parensRegex))
 		return mdc.match(parensRegex)[1].trim();

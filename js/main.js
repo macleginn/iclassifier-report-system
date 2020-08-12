@@ -56,7 +56,7 @@ let statsDiv = {
 		const dict   = vnode.attrs.data,
 			  font   = vnode.attrs.font,
 			  header = vnode.attrs.header;
-		if (JSON.stringify(dict) == JSON.stringify({}))
+		if (JSON.stringify(dict) === JSON.stringify({}))
 			return m('div', 'No data');
 		else {
 			let sortedLemmaCounts = sortCounterDesc(dict);
@@ -103,6 +103,7 @@ let statsTable = {
 		);
 	}
 }
+
 function cmpInts(a, b) {
     let aInt = parseInt(a),
         bInt = parseInt(b);
@@ -127,6 +128,13 @@ function byID(id) {
 	return document.getElementById(id);
 }
 
+// A JS version of Python's "get" method for dicts.
+function get(dict, key, plug) {
+	if (dict.hasOwnProperty(key))
+		return dict[key];
+	else
+		return plug;
+}
 
 function goFullScreen(elementID) {
 	let element = byID(elementID);
