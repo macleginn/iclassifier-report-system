@@ -4,7 +4,7 @@ const selectStyle = {
 	// height: '50px'
 };
 
-
+let clfFilterDict = {};
 
 let clfReport = {
 	currentClf: '---',
@@ -33,6 +33,29 @@ let clfReport = {
 							{value: getClfMDC(clf)},
 							clf)))
 				),
+				m('br'), m('br'),
+				m(listMenu, {
+					menuName: 'clf-search-menu',
+					dataList: clfArr,
+					filterDict: clfFilterDict,
+					filterFunction: (clf, containerID) => {
+						let test = get(clfFilterDict, containerID, '').toLowerCase();
+						return clf.toLowerCase().indexOf(test) >= 0;
+					},
+					divBuilderCallback: clf => {
+						let button = document.createElement('div');
+						button.innerText = clf;
+						button.classList.add('menu-button-value');
+						button.onclick = () => {
+							byID('clf-search-menu').style.display = 'none';
+							getClfReport(getClfMDC(clf));
+							clfReport.currentClf = getClfMDC(clf);
+							m.redraw();
+						}
+						return button;
+					}
+				}),
+				m(listMenuButton, { menuName: 'clf-search-menu' }),
 
 				m('br'),
 				m('h4', 'Subset by type:'),
