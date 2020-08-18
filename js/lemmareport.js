@@ -393,7 +393,9 @@ const colours = [
 	'goldenrod',
 	'cyan',
 	'magenta',
-	'beige'
+	'beige',
+	'white',
+	'orange'
 ];
 
 function colourClassifiers(mdc_w_markup) {
