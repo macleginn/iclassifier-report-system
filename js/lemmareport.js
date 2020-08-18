@@ -128,9 +128,11 @@ let lemmaStats = {
 		
 		const lemma         = vnode.attrs.lemma,
 			transliteration = lemmaData[lemma].transliteration,
-			meaning         = lemmaData[lemma].meaning,
-		    tokensForLemma  = getTokensForLemma(parseInt(lemma));
+			meaning         = lemmaData[lemma].meaning;
 
+		let tokensForLemma  = getTokensForLemma(parseInt(lemma));
+		if (tokenDisplayType === 'compound-part')
+			tokensForLemma = preprocessCompoundParts(tokensForLemma);
 
 		return m('div#lemma-tables', [
 			m.trust(`<h3>Tokens for lemma <em>${transliteration}</em> (${meaning}):</h3>`),
@@ -143,9 +145,10 @@ let lemmaStats = {
 				}},
 				m(
 					'ul.tokens-list', 
-					tokensForLemma.map(tokenId => m.trust(
-						`<li>${showTokenWithClfs(tokenId)}</li>`, 
-					))
+					tokensForLemma.map(tokenId => tokenDisplayType === 'compound-part' ?
+						m.trust(`<li>${showCompoundPartWithClfs(tokenId)}</li>`,) :
+						m.trust(`<li>${showTokenWithClfs(tokenId)}</li>`,)
+					)
 				)),
 			m('h3', 'Classifier statistics for the lemma'),
 			m(statsDiv, {data: clfDict, font: '', header: 'Classifier'}),
@@ -159,14 +162,17 @@ let lemmaStats = {
 
 function getTokensForLemma(lemma) {
 	let result = [];
-	for (const key in tokenData)
+	for (const key in tokenData) {
 		if (tokenData.hasOwnProperty(key) && tokenData[key].lemma_id === lemma)
 			if (tokenDisplayType === 'all')
 				result.push(key);
 			else if (tokenDisplayType === 'standalone' && !compoundParts.has(parseInt(key)))
 				result.push(key);
-			else if (tokenDisplayType === 'compound-part' && compoundParts.has(parseInt(key)))
+			else if (tokenDisplayType === 'compound-part' && compoundParts.has(parseInt(key))) {
 				result.push(key);
+			}
+	}
+	result.sort();
 	return result;
 }
 
@@ -176,8 +182,9 @@ function getTokensForLemma(lemma) {
  * witness name and coordinates when those are available.
  */
 function showTokenWithClfs(tokenId) {
-	let mdc    = tokenData[tokenId].mdc,
-		clfArr = extractClfsFromString(tokenData[tokenId].mdc_w_markup);
+	let mdc          = tokenData[tokenId].mdc,
+		clfArr       = extractClfsFromString(tokenData[tokenId].mdc_w_markup),
+		colouredSpan = colourClassifiers(tokenData[tokenId].mdc_w_markup);
 	
 	if (projectType === 'hieroglyphic')
 		clfArr = clfArr.map(
@@ -201,9 +208,9 @@ function showTokenWithClfs(tokenId) {
 			witnessString = witnessString + ')';
 	}
 	if (clfArr.length > 0)
-		return `${mdc} (${clfArr.join(', ')})${witnessString}`;
+		return `${colouredSpan} (${clfArr.join(', ')})${witnessString}`;
 	else
-		return mdc + witnessString;
+		return colouredSpan + witnessString;
 }
 
 function getLemmaReport(lemma) {
@@ -362,4 +369,64 @@ async function drawLemmaClfGraph(lemma) {
 		idCounter++;
 	}
 }
-			
+
+/**
+ * Groups compound parts by the ids of their enclosing compounds.
+ */
+function preprocessCompoundParts(tokenIDArr) {
+	let result = [];
+	for (const tokenID of tokenIDArr) {
+		const compoundID = tokenData[tokenID].compound_id;
+		result.push([compoundID, tokenID]);
+	}
+	// We don't care about the particular ordering as long as
+	// the same id's go together.
+	result.sort();
+	return result;
+}
+
+const colours = [
+	'red',
+	'green',
+	'blue',
+	'brown',
+	'goldenrod',
+	'cyan',
+	'magenta',
+	'beige'
+];
+
+function colourClassifiers(mdc_w_markup) {
+	if (mdc_w_markup === null)
+		return '';
+
+	let colourIndex = 0,
+		buffer = [],
+		insideClf = false;
+	for (let i = 0; i < mdc_w_markup.length; i++) {
+		if (mdc_w_markup.charAt(i) === '~') {
+			if (!insideClf) {
+				insideClf = true;
+				buffer.push(`<span style="color: ${colours[colourIndex++]}">`);
+			} else {
+				insideClf = false;
+				buffer.push('</span>');
+			}
+		} else
+			buffer.push(mdc_w_markup.charAt(i));
+	}
+	return buffer.join('');
+}
+
+function showCompoundPartWithClfs(idTuple) {
+	const [compoundID, partID] = idTuple,
+		partWithClfs = showTokenWithClfs(partID),
+		compoundMDC = tokenData[compoundID].mdc,
+		compoundMDCWMarkup = tokenData[compoundID].mdc_w_markup;
+	let compoundSpan = '';
+	if (compoundMDCWMarkup === null || compoundMDCWMarkup === '')
+		compoundSpan = compoundMDC;
+	else
+		compoundSpan = colourClassifiers(compoundMDCWMarkup);
+	return `Compound: ${compoundSpan} (${compoundID}). Token: ${partWithClfs} (${partID})`;
+}
