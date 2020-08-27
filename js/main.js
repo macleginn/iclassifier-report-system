@@ -330,7 +330,8 @@ function checkThePathAndRedraw() {
 			case 'classifiers':
 				let clf2Report;
 				if (path !== null && path.length > 0) {
-					clf2Report = path[0];
+					// Classifiers can contain weird characters.
+					clf2Report = decodeURI(path[0]);
 					path.length = 0;
 				}
 				toggleClfReport(clf2Report);
