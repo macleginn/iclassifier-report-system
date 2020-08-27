@@ -3,10 +3,17 @@ let tokenDisplayType = 'all';  // Other possible values: 'standalone', 'compound
 let lemmaFilterDict = {};
 
 let lemmaReport = {
+	onupdate: () => {
+		// A bug workaround.
+		if (lemmaReport.currentLemma !== '---')
+			byID('lemma-report-select').value = lemmaReport.currentLemma;
+	},
 	currentLemma: '---',
 	lemmaArr: [],
 	view: () => {
-		console.log('Showing the lemma report.');
+		if (lemmaReport.currentLemma !== '---')
+			window.location.hash = `!${project}/lemmas/${lemmaReport.currentLemma}`;
+
 		let tokenCounts = {};
 		for (const key in tokenData)
 			if (tokenData.hasOwnProperty(key)) {
@@ -27,6 +34,7 @@ let lemmaReport = {
 				m(
 					'select',
 					{
+						id: 'lemma-report-select',
 						style: {width: '400px'},
 						onchange: e => {
 							tokenDisplayType = 'all';
@@ -182,8 +190,8 @@ function getTokensForLemma(lemma) {
  * witness name and coordinates when those are available.
  */
 function showTokenWithClfs(tokenId) {
-	let mdc          = tokenData[tokenId].mdc,
-		clfArr       = extractClfsFromString(tokenData[tokenId].mdc_w_markup),
+	// let mdc          = tokenData[tokenId].mdc,
+	let	clfArr       = extractClfsFromString(tokenData[tokenId].mdc_w_markup),
 		colouredSpan = colourClassifiers(tokenData[tokenId].mdc_w_markup);
 	
 	if (projectType === 'hieroglyphic')
@@ -425,7 +433,7 @@ function showCompoundPartWithClfs(idTuple) {
 		partWithClfs = showTokenWithClfs(partID),
 		compoundMDC = tokenData[compoundID].mdc,
 		compoundMDCWMarkup = tokenData[compoundID].mdc_w_markup;
-	let compoundSpan = '';
+	let compoundSpan;
 	if (compoundMDCWMarkup === null || compoundMDCWMarkup === '')
 		compoundSpan = compoundMDC;
 	else

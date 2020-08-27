@@ -1,8 +1,10 @@
 const authURL    = 'https://www.iclassifier.pw/api/authserver',
 	  requestURL = 'https://www.iclassifier.pw/api/egyptian-backend/readonly',
+	  // requestURL = 'http://127.0.0.1:11000/readonly',
 	  jseshURL   = 'https://iclassifier.pw/api/jseshrender/?mdc=';
 
-let project          = null,
+let path             = null,
+	project          = null,
 	projectType      = null,
 	downloadingData  = false,
 	showClfQueries   = false,
@@ -292,36 +294,85 @@ async function switchProject(element) {
 	// Turn the buttons back on.
 	project = newProject;
 	downloadingData = false;
+
+	// Modify the displayed URL
+	window.location.hash = '!' + project;
+
+	checkThePathAndRedraw();
+}
+
+function toggleClfReport(clf2Report) {
+	window.location.hash = `!${project}/classifiers`;
+	console.log(clf2Report);
+	if (clf2Report === undefined) {
+		clfReport.currentClf = '---';
+		byID('canvas1').innerHTML = '';
+		byID('canvas2').innerHTML = '';
+	} else {
+		clfReport.currentClf = clf2Report;
+		getClfReport(clf2Report);
+	}
+	setMenu('clfReports');
 	m.redraw();
+}
+
+function checkThePathAndRedraw() {
+	// Check the path for a particular report
+	if (path === null || path.length === 0)  //
+		m.redraw();
+	else {
+		const reportType = path[0];
+		path = path.slice(1);
+		switch (reportType) {
+			case 'lemmas':
+				toggleLemmaReport();
+				break;
+			case 'classifiers':
+				let clf2Report;
+				if (path !== null && path.length > 0) {
+					clf2Report = path[0];
+					path.length = 0;
+				}
+				toggleClfReport(clf2Report);
+				break;
+			case 'clfqueries':
+				toggleClfQueries();
+				break;
+			case 'map':
+				toggleMap();
+				break;
+			default:
+				m.redraw()
+				alert(`Wrong report type: ${reportType}`);
+				break;
+		}
+	}
 }
 
 function toggleClfQueries() {
 	setMenu('clfQueries');
 	m.redraw();
-}
-
-function toggleClfReport(clf2Report) {
-	console.log(clf2Report);
-	if (clf2Report === undefined)
-		clfReport.currentClf = '---';
-	else
-		clfReport.currentClf = clf2Report;
-	byID('canvas1').innerHTML = '';
-	byID('canvas2').innerHTML = '';
-	setMenu('clfReports');
-	m.redraw();
+	window.location.hash = `!${project}/clfqueries`;
 }
 
 function toggleLemmaReport() {
-	lemmaReport.currentLemma = '---';
+	if (path !== null && path.length > 0) {
+		getLemmaReport(parseInt(path[0]));
+		lemmaReport.currentLemma = parseInt(path[0]);
+		path.length = 0;
+	} else {
+		lemmaReport.currentLemma = '---';
+	}
 	byID('canvas').innerHTML = '';
 	setMenu('lemmaReports');
 	m.redraw();
+	window.location.hash = `!${project}/lemmas`;
 }
 
 function toggleMap() {
 	setMenu('map');
 	m.redraw();
+	window.location.hash = `!${project}/map`;
 }
 
 function toggleBgrCol(elementID) {
@@ -346,7 +397,27 @@ async function fetchProjects() {
 		option.value = `${key}|${data[key].type}`;
 		projectSelect.appendChild(option);
 	}
-	projectSelect.value = '---';
+
+	// Check for routes.
+	const url = window.location.href;
+	console.log(url);
+	let parts = url.split('#!');
+	if (parts.length === 1)
+		projectSelect.value = '---';
+	else {
+		parts = parts[1].split('/');
+		// Select a project.
+		const key = parts[0];
+		if (data.hasOwnProperty(key)) {
+			projectSelect.value = `${key}|${data[key].type}`;
+			path = parts.slice(1);
+			switchProject(projectSelect);
+		} else {
+			alert(`Wrong project tag in the URL: ${key}`);
+			path = null;
+			projectSelect.value = '---';
+		}
+	}
 }
 
 document.addEventListener('DOMContentLoaded', fetchProjects);
