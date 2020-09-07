@@ -102,6 +102,7 @@ let lemmaReport = {
 					[
 						m('option', {value: 'all'}, 'All'),
 						m('option', {value: 'standalone'}, 'Standalone tokens'),
+						m('option', {value: 'compound'}, 'Compound tokens'),
 						m('option', {value: 'compound-part'}, 'Parts of compounds')
 					]
 				),
@@ -176,6 +177,8 @@ function getTokensForLemma(lemma) {
 				result.push(key);
 			else if (tokenDisplayType === 'standalone' && !compoundParts.has(parseInt(key)))
 				result.push(key);
+			else if (tokenDisplayType === 'compound' && compoundTokens.has(parseInt(key)))
+				result.push(key);
 			else if (tokenDisplayType === 'compound-part' && compoundParts.has(parseInt(key))) {
 				result.push(key);
 			}
@@ -232,11 +235,14 @@ function getLemmaReport(lemma) {
 				continue;
 			} else if (tokenDisplayType === 'standalone' && compoundParts.has(parseInt(key))) {
 				continue;
+			} else if (tokenDisplayType === 'compound' && !compoundTokens.has(parseInt(key))) {
+				continue;
 			}
 
 			let clfArr = extractClfsFromString(tokenData[key].mdc_w_markup);
 			if (projectType === 'hieroglyphic')
 				clfArr = clfArr.map(c => mdc2glyph(c));
+
 			// Classifier statistics
 			for (const clf of clfArr) {
 				if (!clfDict.hasOwnProperty(clf))

@@ -191,7 +191,7 @@ function filterCompoundTokens() {
 			continue;
 		const compoundId = tokenData[key].compound_id;
 		if (compoundId !== null && compoundId !== "")
-			compoundTokens.add(compoundId);
+			compoundTokens.add(parseInt(compoundId));
 	}
 }
 
