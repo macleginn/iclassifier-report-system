@@ -159,8 +159,12 @@ let lemmaStats = {
 						m.trust(`<li>${showTokenWithClfs(tokenId)}</li>`,)
 					)
 				)),
-			m('h3', 'Classifier statistics for the lemma'),
+			m('h3', `Classifier statistics for the lemma${tokenDisplayType === 'compound-part' ? ' (tokens functioning as compound parts)' : ''}`),
 			m(statsDiv, {data: clfDict, font: '', header: 'Classifier'}),
+			m('div', {style: {display: tokenDisplayType === 'compound-part'}}, [
+				m('h3', "Classifier statistics for compounds including this lemma's tokens as parts"),
+				m(statsDiv, {data: outerCompoundClfDict, font: '', header: 'Classifier'})
+			]),
 			m('h3', 'Classifier combinations with this lemma'),
 			m(statsDiv, {data: comDict, font: '', header: 'Classifier combination'}),
 			m('h3', 'Script statistics'),
@@ -228,6 +232,7 @@ function getLemmaReport(lemma) {
 	clfDict = {};
 	comDict = {};
 	scrDict = {};
+	outerCompoundClfDict = {};
 
 	for (const key in tokenData) {
 		if (tokenData.hasOwnProperty(key) && tokenData[key].lemma_id === lemma) {
@@ -248,6 +253,18 @@ function getLemmaReport(lemma) {
 				if (!clfDict.hasOwnProperty(clf))
 					clfDict[clf] = 0;
 				clfDict[clf]++;
+			}
+
+			// Encompassing-compound classifier statistics
+			if (tokenDisplayType === 'compound-part' && compoundPartGraph.hasOwnProperty(key)) {
+				const compoundId = compoundPartGraph[key];
+				let compoundClfs = extractClfsFromString(tokenData[compoundId].mdc_w_markup);
+				if (projectType === 'hieroglyphic')
+					compoundClfs = compoundClfs.map(c => mdc2glyph(c));
+				compoundClfs.map(c => {
+					if (!outerCompoundClfDict.hasOwnProperty(c)) { outerCompoundClfDict[c] = 0; }
+					outerCompoundClfDict[c]++;
+				});
 			}
 
 			// Classifier-combination statistics

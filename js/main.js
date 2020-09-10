@@ -43,6 +43,10 @@ let tokenData      = null,
 	lemmaData      = null,
 	witnessData    = null;
 
+// An adjacency list for the compound-part graph.
+// To extract compound neighbours, query the list twice.
+let compoundPartGraph = null;
+
 // Data for classifier reports
 let clfDict = {},
 	comDict = {},
@@ -50,7 +54,8 @@ let clfDict = {},
 	lemMean = {},
 	posDict = {},
 	ordDict = {},
-	scrDict = {};
+	scrDict = {},
+	outerCompoundClfDict = {};
 
 // A common part of classifier and lemma reports
 let statsDiv = {
@@ -186,12 +191,19 @@ function mdc2glyph(mdc) {
 
 function filterCompoundTokens() {
 	compoundTokens = new Set();
+	compoundPartGraph = {};
 	for (const key in tokenData) {
 		if (!tokenData.hasOwnProperty(key))
 			continue;
 		const compoundId = tokenData[key].compound_id;
-		if (compoundId !== null && compoundId !== "")
+		if (compoundId !== null && compoundId !== "") {
 			compoundTokens.add(parseInt(compoundId));
+			// Add the edge to the part-compound graph
+			compoundPartGraph[key] = compoundId;
+			if (!compoundPartGraph.hasOwnProperty(compoundId))
+				compoundPartGraph[compoundId] = [];
+			compoundPartGraph[compoundId].push(key);
+		}
 	}
 }
 
