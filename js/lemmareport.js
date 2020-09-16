@@ -334,7 +334,7 @@ async function drawLemmaClfGraph(lemma) {
 	if (lemmaData[lemma] !== undefined) {
 		lemmaString = lemmaData[lemma].transliteration;
 		if (lemmaData[lemma].meaning !== '' && lemmaData[lemma].meaning !== null)
-			lemmaString = lemmaString + `\n(${lemmaData[lemma].meaning})`;
+			lemmaString = lemmaString + `\n(${firstMeaning(lemmaData[lemma].meaning)})`;
 	}
 	nodes.add({id: 1, label: lemmaString, color: {background: 'lightgreen'},
 		font: {face: centralNodeFont}});
@@ -399,6 +399,12 @@ async function drawLemmaClfGraph(lemma) {
 		});
 		idCounter++;
 	}
+}
+
+function firstMeaning(meaning) {
+	meaning = meaning.split(';')[0];
+	meaning = meaning.split(',')[0];
+	return meaning;
 }
 
 /**
