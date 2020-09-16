@@ -434,4 +434,15 @@ async function fetchProjects() {
 	}
 }
 
+/**
+ * A function for prettyfying lemma meanings in graphs.
+ */
+function firstMeaning(meaning) {
+	if (meaning === null || meaning === undefined)
+		return '';
+	meaning = meaning.split(';')[0];
+	meaning = meaning.split(',')[0];
+	return meaning;
+}
+
 document.addEventListener('DOMContentLoaded', fetchProjects);

@@ -401,12 +401,6 @@ async function drawLemmaClfGraph(lemma) {
 	}
 }
 
-function firstMeaning(meaning) {
-	meaning = meaning.split(';')[0];
-	meaning = meaning.split(',')[0];
-	return meaning;
-}
-
 /**
  * Groups compound parts by the ids of their enclosing compounds.
  */

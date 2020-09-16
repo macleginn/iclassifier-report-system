@@ -274,7 +274,7 @@ function getClfReport(mdc) {
 			if (!lemDict.hasOwnProperty(key1))
 				lemDict[key1] = 0;
 			lemDict[key1]++;
-			lemMean[key1] = lemmaData[lemmaID].meaning;
+			lemMean[key1] = firstMeaning(lemmaData[lemmaID].meaning);
         }
 
 		// Script co-occurrence stats
@@ -382,11 +382,14 @@ async function drawLemmaGraph(clf) {
 	for (const lemma in lemDict) {
 		if (!lemDict.hasOwnProperty(lemma))
 			continue;
-		const meaningWords = lemMean[lemma].split(' '),
-			shortMeaning = meaningWords.slice(0, 4).join(' ');
+		let label;
+		if (lemMean[lemma] === '')
+			label = lemma.split(' ')[0];
+		else
+			label = `${lemma.split(' ')[0]}\n(${lemMean[lemma]})`;
 		nodes.add({
 			id: idCounter,
-			label: `${lemma.split(' ')[0]}\n(${shortMeaning})`,
+			label: label,
 			shape: 'circle',
 			color: 'rgba(0, 255, 0, 0.4)'
 		});
