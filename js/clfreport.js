@@ -11,8 +11,10 @@ let clfReport = {
 	clfType: 'any',
 	clfLevel: 'any',
 	onupdate: () => {
-		if (clfReport.currentClf !== '---')
+		if (clfReport.currentClf !== '---') {
+			window.location.hash = `!${project}/classifiers/${clfReport.currentClf}`;
 			byID('classifier-report-select').value = clfReport.currentClf;
+		}
 	},
 	view: () => {
 		if (clfReport.currentClf !== '---')

@@ -315,6 +315,7 @@ async function switchProject(element) {
 }
 
 function toggleClfReport(clf2Report) {
+	lemmaReport.currentLemma = '---';
 	window.location.hash = `!${project}/classifiers`;
 	console.log(clf2Report);
 	if (clf2Report === undefined) {
