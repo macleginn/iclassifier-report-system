@@ -126,7 +126,7 @@ let lemmaMap = {
 		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas');}}, 
 			'Switch background color'),
 		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas');}}, 
-			'Go full screen')
+			'Go fullscreen')
 	])
 }
 

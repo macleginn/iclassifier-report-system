@@ -131,7 +131,7 @@ let clfLemmaMap = {
 		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas1');}},
 			'Switch background color'),
 		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas1');}},
-			'Go full screen')
+			'Go fullscreen')
 	])
 }
 
@@ -150,7 +150,7 @@ let clfClfMap = {
 		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas2')}},
 			'Switch background color'),
 		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas2')}},
-			'Go full screen')
+			'Go fullscreen')
 	])
 }
 

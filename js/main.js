@@ -1,5 +1,6 @@
 const authURL    = 'https://www.iclassifier.pw/api/authserver',
-	  requestURL = 'https://www.iclassifier.pw/api/egyptian-backend/readonly',
+// const authURL    = 'http://127.0.0.1:21000',
+	requestURL = 'https://www.iclassifier.pw/api/egyptian-backend/readonly',
 	  // requestURL = 'http://127.0.0.1:11000/readonly',
 	  jseshURL   = 'https://iclassifier.pw/api/jseshrender/?mdc=';
 
