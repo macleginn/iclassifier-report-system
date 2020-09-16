@@ -159,6 +159,20 @@ let clfClfMap = {
 let clfStats = {
 	view: () => {
 		return m('div#clf-tables', [
+			m('h3', 'Tokens for this classifier'),
+			m('div',
+				{
+					style: {
+						'max-height': '300px',
+						overflow: 'auto',
+						width: '640px',
+						'background-color': 'white'
+					}
+				},
+				m(
+					'ul.tokens-list',
+					tokensForClf.map(tokenId => m.trust(`<li>${showTokenWithClfs(tokenId)}</li>`,))
+				)),
 			m('h3', 'Lemma co-occurrence statistics'),
 			m(statsDiv, {data: lemDict, font: 'unicode-egyptian', header: 'Lemma'}),
 			m('h3', 'Classifier co-occurrence statistics'),
@@ -194,6 +208,7 @@ function getClfReport(mdc) {
 	posDict = {};
 	ordDict = {};
 	scrDict = {};
+	tokensForClf.length = 0;
 
 	for (const key in tokenData) {
 		if (!tokenData.hasOwnProperty(key))
@@ -237,6 +252,8 @@ function getClfReport(mdc) {
 			!types.has(clfReport.clfType)
 		)
 			continue;
+
+		tokensForClf.push(key);
 
 		let glyphs = clfs.map(x => x);
 		if (projectType === 'hieroglyphic')

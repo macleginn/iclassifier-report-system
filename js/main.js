@@ -56,7 +56,8 @@ let clfDict = {},
 	posDict = {},
 	ordDict = {},
 	scrDict = {},
-	outerCompoundClfDict = {};
+	outerCompoundClfDict = {},
+	tokensForClf = [];
 
 // A common part of classifier and lemma reports
 let statsDiv = {
@@ -445,6 +446,42 @@ function firstMeaning(meaning) {
 	meaning = meaning.split(';')[0];
 	meaning = meaning.split(',')[0];
 	return meaning;
+}
+
+/**
+ * Extracts classifiers from the token and shows hieroglyphs
+ * in a larger font compared to the Latin text together with
+ * witness name and coordinates when those are available.
+ */
+function showTokenWithClfs(tokenId) {
+	let	clfArr       = extractClfsFromString(tokenData[tokenId].mdc_w_markup),
+		colouredSpan = colourClassifiers(tokenData[tokenId].mdc_w_markup);
+
+	if (projectType === 'hieroglyphic')
+		clfArr = clfArr.map(
+			mdc =>
+				`<span class="hieroglyphic" style="font-size: 16pt">${mdc2glyph(mdc)}</span>`
+		);
+
+	const witnessID = tokenData[tokenId].witness_id;
+	let witnessName = null,
+		witnessLine = tokenData[tokenId].coordinates_in_witness;
+
+	if (witnessID !== '' && witnessID !== null && witnessData[witnessID] !== undefined) {
+		witnessName = witnessData[witnessID].name;
+	}
+	let witnessString = '';
+	if (witnessName !== null) {
+		witnessString = ` (${witnessName}`;
+		if (witnessLine !== null && witnessLine !== '')
+			witnessString = witnessString + `: ${witnessLine})`;
+		else
+			witnessString = witnessString + ')';
+	}
+	if (clfArr.length > 0)
+		return `${colouredSpan} (${clfArr.join(', ')})${witnessString}`;
+	else
+		return colouredSpan + witnessString;
 }
 
 document.addEventListener('DOMContentLoaded', fetchProjects);
