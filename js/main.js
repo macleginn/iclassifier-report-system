@@ -371,6 +371,7 @@ function toggleClfQueries() {
 }
 
 function toggleLemmaReport() {
+	clfReport.currentClf = '---';
 	if (path !== null && path.length > 0) {
 		getLemmaReport(parseInt(path[0]));
 		lemmaReport.currentLemma = parseInt(path[0]);
