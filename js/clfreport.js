@@ -10,6 +10,7 @@ let clfReport = {
 	currentClf: '---',
 	clfType: 'any',
 	clfLevel: 'any',
+	clfPosition: 'any',
 	onupdate: () => {
 		if (clfReport.currentClf !== '---') {
 			window.location.hash = `!${project}/classifiers/${clfReport.currentClf}`;
@@ -106,6 +107,29 @@ let clfReport = {
 						'option',
 						{value: levelTuple[0]},
 						levelTuple[1]))
+				),
+
+				m('br'),
+				m('h4', 'Subset by position:'),
+				m('br'),
+				m(
+					'select',
+					{
+						style: selectStyle,
+						onchange: e => {
+							getClfReport(e.target.value);
+							clfReport.clfPosition = e.target.value;
+							if (clfReport.currentClf !== '---')
+								getClfReport(clfReport.currentClf);
+						},
+						value: clfReport.clfLevel
+					},
+					[
+						m('option', {value: 'any'}, 'Any'),
+						m('option', {value: 'pre'}, 'Initial'),
+						m('option', {value: 'post'}, 'Final'),
+						m('option', {value: 'inner'}, 'Inner'),
+					]
 				),
 
 				// The report components
@@ -243,6 +267,13 @@ function getClfReport(mdc) {
 			clfReport.clfLevel != clfParse.clf_level
 		)
 			continue;
+
+		const clfTildes = `~${mdc}~`;
+		if (clfReport.clfPosition === 'pre' && !startswith(tokenInfo.mdc_w_markup, clfTildes)) { continue; }
+		if (clfReport.clfPosition === 'post' && !endswith(tokenInfo.mdc_w_markup, clfTildes)) { continue; }
+		if (clfReport.clfPosition === 'inner' &&
+			(startswith(tokenInfo.mdc_w_markup, clfTildes) ||
+			 endswith(tokenInfo.mdc_w_markup, clfTildes))) { continue; }
 
 		let types = new Set();
 		for (const clfType of String(clfParse.clf_type).split(';'))

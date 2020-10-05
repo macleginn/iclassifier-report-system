@@ -145,6 +145,16 @@ function get(dict, key, plug) {
 		return plug;
 }
 
+function startswith(inputString, prefix) {
+	return inputString.indexOf(prefix) === 0;
+}
+
+function endswith(inputString, prefix) {
+	const slen = inputString.length,
+		plen = prefix.length;
+	return inputString.indexOf(prefix) !== -1 && inputString.slice(slen-plen) === prefix;
+}
+
 function goFullScreen(elementID) {
 	let element = byID(elementID);
 	if (element.requestFullscreen) {
