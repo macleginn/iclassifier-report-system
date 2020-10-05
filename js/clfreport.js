@@ -122,7 +122,7 @@ let clfReport = {
 							if (clfReport.currentClf !== '---')
 								getClfReport(clfReport.currentClf);
 						},
-						value: clfReport.clfLevel
+						value: clfReport.clfPosition
 					},
 					[
 						m('option', {value: 'any'}, 'Any'),
