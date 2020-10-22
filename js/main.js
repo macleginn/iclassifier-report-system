@@ -44,9 +44,10 @@ let tokenData      = null,
 	lemmaData      = null,
 	witnessData    = null;
 
-// An adjacency list for the compound-part graph.
-// To extract compound neighbours, query the list twice.
-let compoundPartGraph = null;
+// A dictionary mapping compound parts to compounds
+// and compounds to part id's.
+let compoundPartGraph = null,
+	part2Compound = {};
 
 // Data for classifier reports
 let clfDict = {},
@@ -203,31 +204,24 @@ function mdc2glyph(mdc) {
 
 function filterCompoundTokens() {
 	compoundTokens = new Set();
+	compoundParts = new Set();
 	compoundPartGraph = {};
+	part2Compound = {};
 	for (const key in tokenData) {
 		if (!tokenData.hasOwnProperty(key))
 			continue;
 		const compoundId = tokenData[key].compound_id;
 		if (compoundId !== null && compoundId !== "") {
-			compoundTokens.add(parseInt(compoundId));
+			const int_key = parseInt(key),
+				int_compoundId = parseInt(compoundId);
+			compoundTokens.add(int_compoundId);
+			compoundParts.add(int_key);
 			// Add the edge to the part-compound graph
-			compoundPartGraph[key] = compoundId;
-			if (!compoundPartGraph.hasOwnProperty(compoundId))
-				compoundPartGraph[compoundId] = [];
-			compoundPartGraph[compoundId].push(key);
+			part2Compound[int_key] = int_compoundId;
+			if (!compoundPartGraph.hasOwnProperty(int_compoundId))
+				compoundPartGraph[int_compoundId] = [];
+			compoundPartGraph[int_compoundId].push(int_key);
 		}
-	}
-}
-
-
-function filterCompoundParts() {
-	compoundParts = new Set();
-	for (const key in tokenData) {
-		if (!tokenData.hasOwnProperty(key))
-			continue;
-		if (tokenData[key].compound_id !== null &&
-			tokenData[key].compound_id !== '')
-			compoundParts.add(parseInt(key));
 	}
 }
 
@@ -270,7 +264,6 @@ async function switchProject(element) {
 	}
 	tokenData = await response.json();
 	filterCompoundTokens();
-	filterCompoundParts();
 
 	response = await fetch(`${requestURL}/${newProject}/clf_parses/all`);
 	if (!response.ok) {

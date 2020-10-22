@@ -219,8 +219,8 @@ function getLemmaReport(lemma) {
 			}
 
 			// Encompassing-compound classifier statistics
-			if (tokenDisplayType === 'compound-part' && compoundPartGraph.hasOwnProperty(key)) {
-				const compoundId = compoundPartGraph[key];
+			if (tokenDisplayType === 'compound-part' && part2Compound.hasOwnProperty(parseInt(key))) {
+				const compoundId = part2Compound[parseInt(key)];
 				let compoundClfs = extractClfsFromString(tokenData[compoundId].mdc_w_markup);
 				if (projectType === 'hieroglyphic')
 					compoundClfs = compoundClfs.map(c => mdc2glyph(c));
