@@ -1,4 +1,4 @@
-let network;
+let network, useUnicode = true;
 
 let map = {
 	view: () => {
@@ -39,7 +39,25 @@ let map = {
 					]),
 					m('div', {style: {'margin-top': '5px'}}, [
 						m('input[type=button]', {value: 'Draw w/selected', onclick: e => { e.redraw = false; drawMapByLevelAndType(); } }),
-						m('input[type=button]', {value: 'Draw w/unanalysed', onclick: e => { e.redraw = false; drawMapAll(); }})
+						m('input[type=button]', {value: 'Draw w/unanalysed', onclick: e => { e.redraw = false; drawMapAll(); }}),
+						m('div', {
+								style: {
+									display: projectType === 'hieroglyphic' ? 'inline-block' : 'none'
+								}
+							},
+							[
+								m('input[type=checkbox]', {
+									id: 'use-unicode-checkbox',
+									checked: useUnicode,
+									onclick: e => { 
+										e.redraw = false;
+										useUnicode = !useUnicode; 
+									}
+								}),
+								m('label', { for: 'use-unicode-checkbox' }, 
+									'Use Unicode glyphs for hieroglyphs when available')
+							]
+						)
 					])
 				]),
 
@@ -283,7 +301,6 @@ async function drawMapFromDicts(
 			layout: {
 				improvedLayout: false
 			},
-			// physics: false
 		},
 		container = document.getElementById('clf-map');
 
@@ -316,12 +333,13 @@ async function drawMapFromDicts(
 		lemNodeDict[tail] = get(lemNodeDict, tail, 0) + 1;
 	}
 
-	const radius = 10;
+	const radius = 20;
 
 	for (const key in clfNodeDict) {
 		if (!clfNodeDict.hasOwnProperty(key)) { continue; }
 		const clfGlyph = mdc2glyph(key);
-		if (projectType !== 'hieroglyphic' || clfGlyph !== key) {
+		if (projectType !== 'hieroglyphic' || 
+			(clfGlyph !== key && useUnicode)) {
 			// Don't need to download stuff
 			nodes.add({
 				id: key,
@@ -335,7 +353,7 @@ async function drawMapFromDicts(
 			continue;
 		}
 		try {
-			const response = await fetch('https://www.iclassifier.pw/api/jseshrender/?height=100&centered=true&mdc=' + key);
+			const response = await fetch('https://www.iclassifier.pw/api/jseshrender/?height=50&centered=true&mdc=' + key);
 			if (!response.ok) {
 				const error = await response.text();
 				console.log(`Failed to download a Jsesh picture: ${error}`);

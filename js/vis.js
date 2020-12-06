@@ -28819,7 +28819,8 @@ var configureOptions = {
       borderDashes: false,
       borderRadius: [6, 0, 20, 1],
       interpolation: true,
-      useImageSize: false
+      useImageSize: true
+      // useImageSize: false
     },
     size: [25, 0, 200, 1]
   },
@@ -43624,7 +43625,9 @@ var CachedImage = function () {
         var from = this.coordinates[iterations - 1];
         var _to = this.coordinates[iterations];
 
-        ctx.drawImage(this.canvas, from[0], from[1], from[2], from[3], _to[0], _to[1], _to[2], _to[3]);
+        try {
+          ctx.drawImage(this.canvas, from[0], from[1], from[2], from[3], _to[0], _to[1], _to[2], _to[3]);
+        } catch (err) { return; }
       }
     }
 
@@ -43665,7 +43668,9 @@ var CachedImage = function () {
         //console.log("iterations: " + iterations);
 
         var from = this.coordinates[iterations];
-        ctx.drawImage(this.canvas, from[0], from[1], from[2], from[3], left, top, width, height);
+        try {
+          ctx.drawImage(this.canvas, from[0], from[1], from[2], from[3], left, top, width, height);
+        } catch (err) { return; }
       } else {
         // Draw image directly
         ctx.drawImage(this.image, left, top, width, height);
@@ -43999,7 +44004,8 @@ var NodesHandler = function () {
         borderDashes: false, // only for borders
         borderRadius: 6, // only for box shape
         interpolation: true, // only for image and circularImage shapes
-        useImageSize: false, // only for image and circularImage shapes
+        useImageSize: true, // only for image and circularImage shapes
+        // useImageSize: false, // only for image and circularImage shapes
         useBorderWithImage: false // only for image shape
       },
       size: 25,
