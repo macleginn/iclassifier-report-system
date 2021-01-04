@@ -214,7 +214,7 @@ function getRows(counter) {
                 projectType === 'hieroglyphic'?
                     {
                         translit: key,
-                        mdc: key,
+                        base64: getBase64(key),
                         lemmaCount: lemmasForClfs.hasOwnProperty(key) ? lemmasForClfs[key].size : 0,
                         tokenCount: counter[key]
                     } :
@@ -271,28 +271,26 @@ function getTable(container) {
         ],
         // TODO: make MDC a link
         columns: projectType === 'hieroglyphic' ?
-            [ { data: 'translit' }, { data: 'mdc', renderer: mdcRenderer }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ] :
+            [ { data: 'translit' }, { data: 'base64', renderer: mdcRenderer }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ] :
             [ { data: 'translit' }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ],
         columnSorting: true
     });
 }
 
-async function mdcRenderer(instance, td, row, col, prop, value, cellProperties) {
+async function getBase64(key) {
+    const response = await fetch(`https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=${key}`);
+    if (!response.ok)
+        return '---'
+    return await response.text();
+}
+
+function mdcRenderer(instance, td, row, col, prop, value, cellProperties) {
     while (td.firstChild) {
         td.removeChild(td.firstChild);
     }
 
-    try {
-        const response = await fetch(`https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=${value}`);
-        if (!response.ok)
-            throw 'Failed to retrieve a picture.'
-        const data = await response.text();
-        let imgNode = document.createElement('img');
-        imgNode.alt = value;
-        imgNode.src = 'data:image/png;base64,' + data
-        td.append(imgNode);
-    } catch {
-        let textNode = document.createTextNode('pic unavailable');
-        td.append(textNode);
-    }
+    let imgNode = document.createElement('img');
+    imgNode.alt = 'pic';
+    imgNode.src = 'data:image/png;base64,' + value;
+    td.append(imgNode);
 }
