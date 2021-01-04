@@ -20,10 +20,12 @@ let clfQueries = {
     dateFrom: 'any',
     dateTo: 'any',
     table: null,
-    oncreate: () => {
+    oncreate: e => {
+        e.redraw = false;
         clfQueries.table = getTable(byID('table-wrapper'));
     },
-    onupdate: () => {
+    onupdate: e => {
+        e.redraw = false;
         if (clfQueries.table !== null)
             clfQueries.table.destroy();
         clfQueries.table = getTable(byID('table-wrapper'));
