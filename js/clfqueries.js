@@ -277,10 +277,20 @@ function getTable(container) {
     });
 }
 
-function mdcRenderer(instance, td, row, col, prop, value, cellProperties) {
+async function mdcRenderer(instance, td, row, col, prop, value, cellProperties) {
     while (td.firstChild)
         td.removeChild(td.firstChild);
-    // TODO: try requesting a JSesh pic and adding an img node
-    let textNode = document.createTextNode(value + ' pic');
-    td.append(textNode);
+    try {
+        const response = await fetch(`https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=${key}`);
+        if (!response.ok)
+            throw 'Failed to retrieve a picture.'
+        const data = await response.text();
+        let imgNode = document.createElement('img');
+        imgNode.alt = value;
+        imgNode.src = 'data:image/png;base64,' + data
+        td.append(imgNode);
+    } catch {
+        let textNode = document.createTextNode('pic unavailable');
+        td.append(textNode);
+    }
 }
