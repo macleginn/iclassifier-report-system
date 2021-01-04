@@ -208,6 +208,10 @@ function populateClfDict() {
     }
 }
 
+function getClfReportLink(clf) {
+    return `<a href="https://www.iclassifier.pw/reports/#!${project}/classifiers/${clf}" target="_blank">${clf}</a>`
+}
+
 function getRows(counter) {
     let result = [];
     for (const key in counter)
@@ -215,13 +219,13 @@ function getRows(counter) {
             result.push(
                 projectType === 'hieroglyphic'?
                     {
-                        translit: key,
+                        translit: getClfReportLink(key),
                         mdc: key,
                         lemmaCount: lemmasForClfs.hasOwnProperty(key) ? lemmasForClfs[key].size : 0,
                         tokenCount: counter[key]
                     } :
                     {
-                        translit: key,
+                        translit: getClfReportLink(key),
                         lemmaCount: lemmasForClfs.hasOwnProperty(key) ? lemmasForClfs[key].size : 0,
                         tokenCount: counter[key]
                     });
@@ -271,10 +275,9 @@ function getTable(container) {
             'filter_by_value',
             'filter_action_bar'
         ],
-        // TODO: make MDC a link
         columns: projectType === 'hieroglyphic' ?
-            [ { data: 'translit' }, { data: 'mdc', renderer: mdcRenderer }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ] :
-            [ { data: 'translit' }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ],
+            [ { data: 'translit', renderer: 'html' }, { data: 'mdc', renderer: mdcRenderer }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ] :
+            [ { data: 'translit', renderer: 'html' }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ],
         columnSorting: true
     });
 }
