@@ -21,10 +21,12 @@ let clfQueries = {
     dateTo: 'any',
     table: null,
     oncreate: () => {
+        populateClfDict();
         clfQueries.table = getTable(byID('table-wrapper'));
         getGlyphs();
     },
     onupdate: () => {
+        populateClfDict();
         if (clfQueries.table !== null)
             clfQueries.table.destroy();
         clfQueries.table = getTable(byID('table-wrapper'));
@@ -97,6 +99,8 @@ function getTokens(counter) {
 }
 
 function populateClfDict() {
+    clfCounts = {};
+    lemmasForClfs = {};
 
     for (const key in tokenData) {
 		if (!tokenData.hasOwnProperty(key))
