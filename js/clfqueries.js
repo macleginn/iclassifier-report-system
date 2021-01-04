@@ -22,13 +22,11 @@ let clfQueries = {
     table: null,
     oncreate: () => {
         clfQueries.table = getTable(byID('table-wrapper'));
-        getGlyphs();
     },
     onupdate: () => {
         if (clfQueries.table !== null)
             clfQueries.table.destroy();
         clfQueries.table = getTable(byID('table-wrapper'));
-        getGlyphs();
     },
     view: () => {
         populateClfDict();
@@ -214,23 +212,22 @@ function getRows(counter) {
         if (counter.hasOwnProperty(key))
             result.push(
                 projectType === 'hieroglyphic'?
-                    [
-                        key,
-                        `<img alt="${key} glyph" id="${key}"/>`,
-                        lemmasForClfs.hasOwnProperty(key) ? lemmasForClfs[key].size : 0,
-                        counter[key]
-                    ] :
-                    [
-                        key,
-                        lemmasForClfs.hasOwnProperty(key) ? lemmasForClfs[key].size : 0,
-                        counter[key]
-                    ]);
+                    {
+                        translit: key,
+                        mdc: key,
+                        lemmaCount: lemmasForClfs.hasOwnProperty(key) ? lemmasForClfs[key].size : 0,
+                        tokenCount: counter[key]
+                    } :
+                    {
+                        translit: key,
+                        lemmaCount: lemmasForClfs.hasOwnProperty(key) ? lemmasForClfs[key].size : 0,
+                        tokenCount: counter[key]
+                    });
     result.sort((a, b) => {
         // Sort by the number of lemmas
-        const l = a.length;
-        if (a[l-2] > b[l-2])
+        if (a.lemmaCount > b.lemmaCount)
             return -1;
-        else if (a[l-2] < b[l-2])
+        else if (a.lemmaCount < b.lemmaCount)
             return 1;
         else
             return 0;
@@ -254,7 +251,7 @@ function extractSpans(counter) {
             getClfReport(el[0]);
             toggleClfReport(el[0]);
         }},
-        `${el[0]}: ${el[el.length-1]}`));
+        `${el.translit}: ${el.tokenCount}`));
 }
 
 function getTable(container) {
@@ -272,14 +269,18 @@ function getTable(container) {
             'filter_by_value',
             'filter_action_bar'
         ],
+        // TODO: make MDC a link
         columns: projectType === 'hieroglyphic' ?
-            [[false, true, false, false].map(val => { return { renderer: val ? 'html' : 'text'} })] :
-            [[false, false, false].map(val => { return { renderer: val ? 'html' : 'text'} })],
+            [ { data: 'translit' }, { data: 'mdc', renderer: mdcRenderer }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ] :
+            [ { data: 'translit' }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ],
         columnSorting: true
     });
 }
 
-async function getGlyphs() {
-    // Iterate over keys in clfCounts; request JSesh for each;
-    // add src to img's.
+function mdcRenderer(instance, td, row, col, prop, value, cellProperties) {
+    while (td.firstChild)
+        td.removeChild(td.firstChild);
+    // TODO: try requesting a JSesh pic and adding an img node
+    let textNode = document.createTextNode(value + ' pic');
+    td.append(textNode);
 }
