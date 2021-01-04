@@ -20,12 +20,10 @@ let clfQueries = {
     dateFrom: 'any',
     dateTo: 'any',
     table: null,
-    oncreate: e => {
-        e.redraw = false;
+    oncreate: () => {
         clfQueries.table = getTable(byID('table-wrapper'));
     },
-    onupdate: e => {
-        e.redraw = false;
+    onupdate: () => {
         if (clfQueries.table !== null)
             clfQueries.table.destroy();
         clfQueries.table = getTable(byID('table-wrapper'));
@@ -60,17 +58,17 @@ let clfQueries = {
                 getSelectFromThesaurus('genres', selectStyle, e => {
                     clfQueries.genre = e.target.value;
                 }),
-                m('br'),
-                m('h4', `${getTypes(clfCounts)} classifier types and ${getTokens(clfCounts)} classifier tokens`),
-                m('br'),
-                m('div', {style: {
-                    width: '640px',
-                    height: '480px',
-                    padding: '4px',
-                    'background-color': 'white',
-                    border: '1px solid black',
-                    overflow: 'auto'
-                }}, extractSpans(clfCounts)),
+                // m('br'),
+                // m('h4', `${getTypes(clfCounts)} classifier types and ${getTokens(clfCounts)} classifier tokens`),
+                // m('br'),
+                // m('div', {style: {
+                //     width: '640px',
+                //     height: '480px',
+                //     padding: '4px',
+                //     'background-color': 'white',
+                //     border: '1px solid black',
+                //     overflow: 'auto'
+                // }}, extractSpans(clfCounts)),
                 m('br'),
                 m('h4', 'Classifier table'),
                 m('br'),
