@@ -213,7 +213,7 @@ function getRows(counter) {
     for (const key in counter)
         if (counter.hasOwnProperty(key))
             result.push(
-                projectType === 'hieroglpyhic'?
+                projectType === 'hieroglyphic'?
                     [
                         key,
                         `<img alt="${key} glyph" id="${key}"/>`,
