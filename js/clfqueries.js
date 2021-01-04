@@ -281,7 +281,7 @@ async function mdcRenderer(instance, td, row, col, prop, value, cellProperties) 
     while (td.firstChild)
         td.removeChild(td.firstChild);
     try {
-        const response = await fetch(`https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=${key}`);
+        const response = await fetch(`https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=${value}`);
         if (!response.ok)
             throw 'Failed to retrieve a picture.'
         const data = await response.text();
