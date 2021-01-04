@@ -401,7 +401,7 @@ async function drawLemmaGraph(clf) {
 	if (projectType === 'hieroglyphic' && baseGlyph === clf) {
 		try {
 			const response = await fetch(
-				'https://www.iclassifier.pw/api/jseshrender/?height=100&centered=true&mdc=' + mdc
+				'https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=' + mdc
 			);
 			if (!response.ok)
 				nodes.add({id: 1, label: clf, color: {background: 'beige'}});
@@ -498,7 +498,7 @@ async function drawClfGraph(clf) {
 	if (projectType === 'hieroglyphic' && baseGlyph === mdc) {
 		try {
 			const response = await fetch(
-				'https://www.iclassifier.pw/api/jseshrender/?height=100&centered=true&mdc=' + mdc
+				'https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=' + mdc
 			);
 			if (!response.ok)
 				nodes.add({id: 1, label: clf, color: {background: 'beige'}});
