@@ -262,6 +262,7 @@ async function switchProject(element) {
 		alert("Failed to download token info from the server: " + message);
 		return;
 	}
+
 	tokenData = await response.json();
 	filterCompoundTokens();
 
@@ -314,6 +315,10 @@ async function switchProject(element) {
 
 	// Modify the displayed URL
 	window.location.hash = '!' + project;
+
+	// Zero out the counts
+	clfCounts = {};
+	lemmasForClfs = {};
 
 	checkThePathAndRedraw();
 }

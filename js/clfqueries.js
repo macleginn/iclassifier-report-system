@@ -97,8 +97,6 @@ function getTokens(counter) {
 }
 
 function populateClfDict() {
-    clfCounts = {};
-    lemmasForClfs = {};
 
     for (const key in tokenData) {
 		if (!tokenData.hasOwnProperty(key))
