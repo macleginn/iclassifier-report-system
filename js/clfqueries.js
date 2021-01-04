@@ -25,7 +25,8 @@ let clfQueries = {
         getGlyphs();
     },
     onupdate: () => {
-        clfQueries.table.destroy();
+        if (clfQueries.table !== null)
+            clfQueries.table.destroy();
         clfQueries.table = getTable(byID('table-wrapper'));
         getGlyphs();
     },
