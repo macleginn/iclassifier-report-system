@@ -21,12 +21,12 @@ let clfQueries = {
     dateTo: 'any',
     table: null,
     oncreate: () => {
-        clfQueries.table = getTable(byId('table-wrapper'));
+        clfQueries.table = getTable(byID('table-wrapper'));
         getGlyphs();
     },
     onupdate: () => {
         clfQueries.table.destroy();
-        clfQueries.table = getTable(byId('table-wrapper'));
+        clfQueries.table = getTable(byID('table-wrapper'));
         getGlyphs();
     },
     view: () => {
