@@ -1,4 +1,5 @@
-let clfCounts = {};
+let clfCounts = {},
+    lemmasForClfs = {};
 
 let selectStyleQuery = {width: '150px'},
     selectLabelStyle = {
@@ -18,6 +19,16 @@ let clfQueries = {
     period: 'any',
     dateFrom: 'any',
     dateTo: 'any',
+    table: null,
+    oncreate: () => {
+        clfQueries.table = getTable(byId('table-wrapper'));
+        getGlyphs();
+    },
+    onupdate: () => {
+        clfQueries.table.destroy();
+        clfQueries.table = getTable(byId('table-wrapper'));
+        getGlyphs();
+    },
     view: () => {
         populateClfDict();
         return m(
@@ -58,7 +69,11 @@ let clfQueries = {
                     'background-color': 'white',
                     border: '1px solid black',
                     overflow: 'auto'
-                }}, extractSpans(clfCounts))
+                }}, extractSpans(clfCounts)),
+                m('br'),
+                m('h4', 'Classifier table'),
+                m('br'),
+                m('div#table-wrapper')
             ]
         )
     }
@@ -87,6 +102,7 @@ function populateClfDict() {
 		if (!tokenData.hasOwnProperty(key))
 			continue;
         const tokenInfo = tokenData[key],
+            lemmaID = tokenInfo.lemma_id,
             clfs = extractClfsFromString(tokenInfo.mdc_w_markup);
         if (clfs.length === 0)
             continue;
@@ -178,6 +194,12 @@ function populateClfDict() {
                 continue;
 
             // He made it
+            // Add the lemma
+            if (!lemmasForClfs.hasOwnProperty(clf))
+                lemmasForClfs[clf] = new Set();
+            if (lemmaID !== null)
+                lemmasForClfs[clf].add(lemmaID)
+            // Count the token
             if (!clfCounts.hasOwnProperty(clf))
                 clfCounts[clf] = 0;
             clfCounts[clf]++;
@@ -185,19 +207,38 @@ function populateClfDict() {
     }
 }
 
-function extractSpans(counter) {
+function getRows(counter) {
     let result = [];
     for (const key in counter)
         if (counter.hasOwnProperty(key))
-            result.push([key, counter[key]]);
+            result.push(
+                projectType === 'hieroglpyhic'?
+                    [
+                        key,
+                        `<img alt="${key} glyph" id="${key}"/>`,
+                        lemmasForClfs.hasOwnProperty(key) ? lemmasForClfs[key].size : 0,
+                        counter[key]
+                    ] :
+                    [
+                        key,
+                        lemmasForClfs.hasOwnProperty(key) ? lemmasForClfs[key].size : 0,
+                        counter[key]
+                    ]);
     result.sort((a, b) => {
-        if (a[1] > b[1])
+        // Sort by the number of lemmas
+        const l = a.length;
+        if (a[l-2] > b[l-2])
             return -1;
-        else if (a[1] < b[1])
+        else if (a[l-2] < b[l-2])
             return 1;
         else
             return 0;
-    })
+    });
+    return result;
+}
+
+function extractSpans(counter) {
+    let result = getRows(counter);
     return result.map(el => m(
         'span.clf-span',
         {style: {
@@ -212,5 +253,32 @@ function extractSpans(counter) {
             getClfReport(el[0]);
             toggleClfReport(el[0]);
         }},
-        `${el[0]}: ${el[1]}`));
+        `${el[0]}: ${el[el.length-1]}`));
+}
+
+function getTable(container) {
+    return new Handsontable(container, {
+        licenseKey: 'non-commercial-and-evaluation',
+        data: getRows(clfCounts),
+        colHeaders: projectType === 'hieroglyphic' ?
+            ['Transliteration', 'Glyph', 'No. lemmas', 'No. tokens'] :
+            ['Transliteration', 'No. lemmas', 'No. tokens'],
+        editor: false,
+        rowHeaders: false,
+        filters: true,
+        dropdownMenu: [
+            'filter_by_condition',
+            'filter_by_value',
+            'filter_action_bar'
+        ],
+        columns: projectType === 'hieroglyphic' ?
+            [[false, true, false, false].map(val => { return { renderer: val ? 'html' : 'text'} })] :
+            [[false, false, false].map(val => { return { renderer: val ? 'html' : 'text'} })],
+        columnSorting: true
+    });
+}
+
+async function getGlyphs() {
+    // Iterate over keys in clfCounts; request JSesh for each;
+    // add src to img's.
 }
