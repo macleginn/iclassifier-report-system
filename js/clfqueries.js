@@ -22,11 +22,13 @@ let clfQueries = {
     table: null,
     oncreate: () => {
         clfQueries.table = getTable(byID('table-wrapper'));
+        getGlyphs();
     },
     onupdate: () => {
         if (clfQueries.table !== null)
             clfQueries.table.destroy();
         clfQueries.table = getTable(byID('table-wrapper'));
+        getGlyphs();
     },
     view: () => {
         populateClfDict();
@@ -214,7 +216,7 @@ function getRows(counter) {
                 projectType === 'hieroglyphic'?
                     {
                         translit: key,
-                        base64: getBase64(key),
+                        mdc: key,
                         lemmaCount: lemmasForClfs.hasOwnProperty(key) ? lemmasForClfs[key].size : 0,
                         tokenCount: counter[key]
                     } :
@@ -271,17 +273,24 @@ function getTable(container) {
         ],
         // TODO: make MDC a link
         columns: projectType === 'hieroglyphic' ?
-            [ { data: 'translit' }, { data: 'base64', renderer: mdcRenderer }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ] :
+            [ { data: 'translit' }, { data: 'mdc', renderer: mdcRenderer }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ] :
             [ { data: 'translit' }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ],
         columnSorting: true
     });
 }
 
+function getGlyphs() {
+    for (const key in clfCounts)
+        if (clfCounts.hasOwnProperty(key))
+            getBase64(key);
+}
+
 async function getBase64(key) {
     const response = await fetch(`https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=${key}`);
     if (!response.ok)
-        return '---'
-    return await response.text();
+        return;
+    const data = await response.text();
+    byID(key).src = 'data:image/png;base64,' + data;
 }
 
 function mdcRenderer(instance, td, row, col, prop, value, cellProperties) {
@@ -291,6 +300,6 @@ function mdcRenderer(instance, td, row, col, prop, value, cellProperties) {
 
     let imgNode = document.createElement('img');
     imgNode.alt = 'pic';
-    imgNode.src = 'data:image/png;base64,' + value;
+    imgNode.id = value;
     td.append(imgNode);
 }
