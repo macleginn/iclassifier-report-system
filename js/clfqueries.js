@@ -296,7 +296,9 @@ async function getBase64(key) {
         return;
     const data = await response.text();
     base64Cache[key] = data;
-    byID(key).src = 'data:image/png;base64,' + data;
+    try {
+        byID(key).src = 'data:image/png;base64,' + data;
+    } catch {}
 }
 
 function mdcRenderer(instance, td, row, col, prop, value, cellProperties) {
