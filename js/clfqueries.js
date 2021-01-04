@@ -279,13 +279,13 @@ function getTable(container) {
     });
 }
 
+let base64Cache = {};
+
 function getGlyphs() {
     for (const key in clfCounts)
-        if (clfCounts.hasOwnProperty(key))
+        if (clfCounts.hasOwnProperty(key) && !base64Cache.hasOwnProperty(key))
             getBase64(key);
 }
-
-let base64Cache = {};
 
 async function getBase64(key) {
     const response = await fetch(`https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=${key}`);
