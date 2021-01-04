@@ -285,11 +285,14 @@ function getGlyphs() {
             getBase64(key);
 }
 
+let base64Cache = {};
+
 async function getBase64(key) {
     const response = await fetch(`https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=${key}`);
     if (!response.ok)
         return;
     const data = await response.text();
+    base64Cache[key] = data;
     byID(key).src = 'data:image/png;base64,' + data;
 }
 
@@ -299,7 +302,9 @@ function mdcRenderer(instance, td, row, col, prop, value, cellProperties) {
     }
 
     let imgNode = document.createElement('img');
-    imgNode.alt = 'pic';
     imgNode.id = value;
+    imgNode.alt = value;
+    if (base64Cache.hasOwnProperty(value))
+        imgNode.src = 'data:image/png;base64,' + base64Cache[value];
     td.append(imgNode);
 }
