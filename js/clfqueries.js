@@ -1,7 +1,7 @@
 let clfCounts = {},
     lemmasForClfs = {};
 
-let selectStyleQuery = {width: '150px'},
+let selectStyleQuery = { width: '150px' },
     selectLabelStyle = {
         'display': 'inline-block',
         'width': '100px'
@@ -39,26 +39,27 @@ let clfQueries = {
             {
                 style: {
                     display: showClfQueries ? 'block' : 'none',
-                    'padding-top': '0'}
+                    'padding-top': '0'
+                }
             },
             [
                 m('h3', 'Subset by'),
-                m('h4', {style: selectLabelStyle}, 'Level'),
+                m('h4', { style: selectLabelStyle }, 'Level'),
                 arr2Select(clfLevelArr, selectStyleQuery, e => {
                     clfQueries.clfLevel = e.target.value;
                 }),
                 m('br'),
-                m('h4', {style: selectLabelStyle}, 'Type'),
+                m('h4', { style: selectLabelStyle }, 'Type'),
                 arr2Select(clfTypeArr, selectStyleQuery, e => {
                     clfQueries.clfType = e.target.value;
                 }),
                 m('br'),
-                m('h4', {style: selectLabelStyle}, 'Script'),
+                m('h4', { style: selectLabelStyle }, 'Script'),
                 getSelectFromThesaurus('scripts', selectStyle, e => {
                     clfQueries.script = e.target.value;
                 }),
                 m('br'),
-                m('h4', {style: selectLabelStyle}, 'Genre'),
+                m('h4', { style: selectLabelStyle }, 'Genre'),
                 getSelectFromThesaurus('genres', selectStyle, e => {
                     clfQueries.genre = e.target.value;
                 }),
@@ -103,8 +104,8 @@ function populateClfDict() {
     lemmasForClfs = {};
 
     for (const key in tokenData) {
-		if (!tokenData.hasOwnProperty(key))
-			continue;
+        if (!tokenData.hasOwnProperty(key))
+            continue;
         const tokenInfo = tokenData[key],
             lemmaID = tokenInfo.lemma_id,
             clfs = extractClfsFromString(tokenInfo.mdc_w_markup);
@@ -142,12 +143,12 @@ function populateClfDict() {
         };
         const witnessId = parseInt(tokenInfo.witness_id);
         if (!isNaN(witnessId) && witnessData.hasOwnProperty(witnessId)) {
-            witnessInfo.genre             = witnessData[witnessId].genre;
-            witnessInfo.script            = witnessData[witnessId].script;
+            witnessInfo.genre = witnessData[witnessId].genre;
+            witnessInfo.script = witnessData[witnessId].script;
             witnessInfo.period_date_start = witnessData[witnessId].period_date_start;
-            witnessInfo.period_date_end   = witnessData[witnessId].period_date_end;
+            witnessInfo.period_date_end = witnessData[witnessId].period_date_end;
             witnessInfo.chrono_date_start = witnessData[witnessId].chrono_date_start;
-            witnessInfo.chrono_date_end   = witnessData[witnessId].chrono_date_end;
+            witnessInfo.chrono_date_end = witnessData[witnessId].chrono_date_end;
         }
         if (clfQueries.genre !== 'any' &&
             clfQueries.genre !== witnessInfo.genre)
@@ -212,7 +213,7 @@ function populateClfDict() {
 }
 
 function getClfReportLink(clf) {
-    return `<a href="https://www.iclassifier.pw/reports/#!${project}/classifiers/${clf}" target="_blank">${clf}</a>`
+    return `<a href="https://iclassifier.pw/reports/#!${project}/classifiers/${clf}" target="_blank">${clf}</a>`
 }
 
 function getRows(counter) {
@@ -220,7 +221,7 @@ function getRows(counter) {
     for (const key in counter)
         if (counter.hasOwnProperty(key))
             result.push(
-                projectType === 'hieroglyphic'?
+                projectType === 'hieroglyphic' ?
                     {
                         translit: getClfReportLink(key),
                         mdc: key,
@@ -248,18 +249,20 @@ function extractSpans(counter) {
     let result = getRows(counter);
     return result.map(el => m(
         'span.clf-span',
-        {style: {
-            padding: '2px',
-            margin: '2px',
-            border: '1px dotted black',
-            'border-radius': '2px',
-            'background-color': '#ffeecc',
-            display: 'inline-block'
+        {
+            style: {
+                padding: '2px',
+                margin: '2px',
+                border: '1px dotted black',
+                'border-radius': '2px',
+                'background-color': '#ffeecc',
+                display: 'inline-block'
+            },
+            onclick: () => {
+                getClfReport(el[0]);
+                toggleClfReport(el[0]);
+            }
         },
-        onclick: () => {
-            getClfReport(el[0]);
-            toggleClfReport(el[0]);
-        }},
         `${el.translit}: ${el.tokenCount}`));
 }
 
@@ -279,8 +282,8 @@ function getTable(container) {
             'filter_action_bar'
         ],
         columns: projectType === 'hieroglyphic' ?
-            [ { data: 'translit', renderer: 'html' }, { data: 'mdc', renderer: mdcRenderer }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ] :
-            [ { data: 'translit', renderer: 'html' }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric'} ],
+            [{ data: 'translit', renderer: 'html' }, { data: 'mdc', renderer: mdcRenderer }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric' }] :
+            [{ data: 'translit', renderer: 'html' }, { data: 'lemmaCount', type: 'numeric' }, { data: 'tokenCount', type: 'numeric' }],
         columnSorting: true
     });
 }
@@ -294,14 +297,14 @@ function getGlyphs() {
 }
 
 async function getBase64(key) {
-    const response = await fetch(`https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=${key}`);
+    const response = await fetch(`https://iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=${key}`);
     if (!response.ok)
         return;
     const data = await response.text();
     base64Cache[key] = data;
     try {
         byID(key).src = 'data:image/png;base64,' + data;
-    } catch {}
+    } catch { }
 }
 
 function mdcRenderer(instance, td, row, col, prop, value, cellProperties) {

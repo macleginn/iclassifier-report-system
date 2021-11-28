@@ -27,7 +27,7 @@ let lemmaReport = {
 		lemmaReport.lemmaArr = sortCounterDesc(tokenCounts);
 		return m(
 			'div',
-			{style: {display: showLemmaReports ? 'block' : 'none'}},
+			{ style: { display: showLemmaReports ? 'block' : 'none' } },
 			[
 				m('h4', 'Select a lemma (only lemmas with at least one token are listed):'),
 				m('br'),
@@ -35,7 +35,7 @@ let lemmaReport = {
 					'select',
 					{
 						id: 'lemma-report-select',
-						style: {width: '400px'},
+						style: { width: '400px' },
 						onchange: e => {
 							tokenDisplayType = 'all';
 							getLemmaReport(parseInt(e.target.value));
@@ -43,15 +43,13 @@ let lemmaReport = {
 						},
 						value: lemmaReport.currentLemma
 					},
-					[m('option', {disabled: true, value: '---'}, '---')]
+					[m('option', { disabled: true, value: '---' }, '---')]
 						.concat(lemmaReport.lemmaArr.map(lemmaTuple => m(
-							'option', 
-							{value: lemmaTuple[0]},
-							`${lemmaTuple[1]}: ${
-								lemmaData[lemmaTuple[0]] === undefined ? 'unknown' :
+							'option',
+							{ value: lemmaTuple[0] },
+							`${lemmaTuple[1]}: ${lemmaData[lemmaTuple[0]] === undefined ? 'unknown' :
 								lemmaData[lemmaTuple[0]].transliteration
-							} (${
-								lemmaData[lemmaTuple[0]] === undefined ? 'unknown' :
+							} (${lemmaData[lemmaTuple[0]] === undefined ? 'unknown' :
 								lemmaData[lemmaTuple[0]].meaning
 							})`
 						)))
@@ -63,14 +61,14 @@ let lemmaReport = {
 					filterFunction: (tuple, containerID) => {
 						const lemmaID = parseInt(tuple[0]),
 							transliteration = lemmaData[lemmaID] === undefined ? 'unknown' : lemmaData[lemmaID].transliteration,
-							meaning         = lemmaData[lemmaID] === undefined ? 'unknown' : lemmaData[lemmaID].meaning;
+							meaning = lemmaData[lemmaID] === undefined ? 'unknown' : lemmaData[lemmaID].meaning;
 						let test = get(lemmaFilterDict, containerID, '').toLowerCase();
 						return (transliteration + meaning).toLowerCase().indexOf(test) >= 0;
 					},
 					divBuilderCallback: tuple => {
 						const lemmaID = parseInt(tuple[0]),
 							transliteration = lemmaData[lemmaID] === undefined ? 'unknown' : lemmaData[lemmaID].transliteration,
-							meaning         = lemmaData[lemmaID] === undefined ? 'unknown' : lemmaData[lemmaID].meaning;
+							meaning = lemmaData[lemmaID] === undefined ? 'unknown' : lemmaData[lemmaID].meaning;
 						let button = document.createElement('div');
 						button.innerText = `${tuple[1]}: ${transliteration} (${meaning})`;
 						button.classList.add('menu-button-value');
@@ -86,29 +84,29 @@ let lemmaReport = {
 				}),
 				m(listMenuButton, { menuName: 'lemma-search-menu' }),
 
-				m('br'),				
+				m('br'),
 				m('h4', 'Report token types:'),
 				m('br'),
 				m(
 					'select',
 					{
 						value: tokenDisplayType,
-						style: {width: '400px'},
-						onchange: e => { 
+						style: { width: '400px' },
+						onchange: e => {
 							tokenDisplayType = e.target.value;
 							getLemmaReport(lemmaReport.currentLemma);
 						}
 					},
 					[
-						m('option', {value: 'all'}, 'All'),
-						m('option', {value: 'standalone'}, 'Standalone tokens'),
-						m('option', {value: 'compound'}, 'Compound tokens'),
-						m('option', {value: 'compound-part'}, 'Parts of compounds')
+						m('option', { value: 'all' }, 'All'),
+						m('option', { value: 'standalone' }, 'Standalone tokens'),
+						m('option', { value: 'compound' }, 'Compound tokens'),
+						m('option', { value: 'compound-part' }, 'Parts of compounds')
 					]
 				),
 
-				m(lemmaMap, {lemma: lemmaReport.currentLemma}),
-				m(lemmaStats, {lemma: lemmaReport.currentLemma})
+				m(lemmaMap, { lemma: lemmaReport.currentLemma }),
+				m(lemmaStats, { lemma: lemmaReport.currentLemma })
 			]);
 	}
 }
@@ -120,12 +118,14 @@ let lemmaMap = {
 	},
 	view: () => m('div', [
 		m('h3', 'Classifier co-occurrence graph'),
-		m('div#canvas', {style: {
-			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
-		}}),
-		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas');}}, 
+		m('div#canvas', {
+			style: {
+				width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
+			}
+		}),
+		m('button', { onclick: e => { e.redraw = false; toggleBgrCol('canvas'); } },
 			'Switch background color'),
-		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas');}}, 
+		m('button', { onclick: e => { e.redraw = false; goFullScreen('canvas'); } },
 			'Go fullscreen')
 	])
 }
@@ -134,44 +134,46 @@ let lemmaStats = {
 	view: vnode => {
 		if (vnode.attrs.lemma === '---')
 			return;
-		
-		const lemma         = vnode.attrs.lemma,
-			transliteration = lemmaData[lemma].transliteration,
-			meaning         = lemmaData[lemma].meaning;
 
-		let tokensForLemma  = getTokensForLemma(parseInt(lemma));
+		const lemma = vnode.attrs.lemma,
+			transliteration = lemmaData[lemma].transliteration,
+			meaning = lemmaData[lemma].meaning;
+
+		let tokensForLemma = getTokensForLemma(parseInt(lemma));
 		if (tokenDisplayType === 'compound-part')
 			tokensForLemma = preprocessCompoundParts(tokensForLemma);
 
 		return m('div#lemma-tables', [
 			m.trust(`<h3>Tokens for lemma <em>${transliteration}</em> (${meaning}):</h3>`),
 			m('div',
-				{style: {
-					'max-height': '300px', 
-					overflow: 'auto', 
-					width: '640px',
-					'background-color': 'white'
-				}},
+				{
+					style: {
+						'max-height': '300px',
+						overflow: 'auto',
+						width: '640px',
+						'background-color': 'white'
+					}
+				},
 				m(
-					'ul.tokens-list', 
+					'ul.tokens-list',
 					tokensForLemma.map(tokenId => tokenDisplayType === 'compound-part' ?
 						m.trust(`<li>${showCompoundPartWithClfs(tokenId)}</li>`,) :
 						m.trust(`<li>${showTokenWithClfs(tokenId)}</li>`,)
 					)
 				)),
 			m('h3', `Classifier statistics for the lemma${tokenDisplayType === 'compound-part' ? ' (tokens functioning as compound parts)' : ''}`),
-			m(statsDiv, {data: clfDict, font: '', header: 'Classifier'}),
-			m('div', {style: {display: tokenDisplayType === 'compound-part'}}, [
+			m(statsDiv, { data: clfDict, font: '', header: 'Classifier' }),
+			m('div', { style: { display: tokenDisplayType === 'compound-part' } }, [
 				m('h3', "Classifier statistics for compounds including this lemma's tokens as parts"),
-				m(statsDiv, {data: outerCompoundClfDict, font: '', header: 'Classifier'})
+				m(statsDiv, { data: outerCompoundClfDict, font: '', header: 'Classifier' })
 			]),
 			m('h3', 'Classifier combinations with this lemma'),
-			m(statsDiv, {data: comDict, font: '', header: 'Classifier combination'}),
+			m(statsDiv, { data: comDict, font: '', header: 'Classifier combination' }),
 			m('h3', 'Script statistics'),
-			m(statsDiv, {data: scrDict, font: 'default', header: 'Script'}),
+			m(statsDiv, { data: scrDict, font: 'default', header: 'Script' }),
 		])
 	}
-}	
+}
 
 function getTokensForLemma(lemma) {
 	let result = [];
@@ -244,7 +246,7 @@ function getLemmaReport(lemma) {
 				if (witnessData[witnessId] === undefined) {
 					console.log(`Witness data for witness_id ${witnessId} is undefined.`);
 					continue;
-				}	
+				}
 				let script = witnessData[witnessId].script;
 				if (script !== null && script !== '') {
 					script = normaliseScript(script);
@@ -275,17 +277,17 @@ async function drawLemmaClfGraph(lemma) {
 	let centralNodeFont;
 	switch (projectType) {
 		case 'cuneiform':
-			options.nodes.font = {face: 'cuneiform'};
+			options.nodes.font = { face: 'cuneiform' };
 			centralNodeFont = 'cuneiform';
 			break;
 		case 'hieroglyphic':
 			// Use Roboto for the lemma and hierofont for classifiers.
-			options.nodes.font = {face: 'hierofont'};
+			options.nodes.font = { face: 'hierofont' };
 			centralNodeFont = 'Roboto';
 			break;
 		case 'chinese':
-			options.nodes.font = {face: 'Noto Sans TC'};
-			centralNodeFont = 'Noto Sans TC';			
+			options.nodes.font = { face: 'Noto Sans TC' };
+			centralNodeFont = 'Noto Sans TC';
 			break;
 		default:
 			break;
@@ -299,8 +301,10 @@ async function drawLemmaClfGraph(lemma) {
 		if (lemmaData[lemma].meaning !== '' && lemmaData[lemma].meaning !== null)
 			lemmaString = lemmaString + `\n(${firstMeaning(lemmaData[lemma].meaning)})`;
 	}
-	nodes.add({id: 1, label: lemmaString, color: {background: 'lightgreen'},
-		font: {face: centralNodeFont}});
+	nodes.add({
+		id: 1, label: lemmaString, color: { background: 'lightgreen' },
+		font: { face: centralNodeFont }
+	});
 
 	let radius = 10;
 
@@ -308,17 +312,17 @@ async function drawLemmaClfGraph(lemma) {
 		if (!clfDict.hasOwnProperty(clfKey))
 			continue;
 
-		const count      = clfDict[clfKey],
+		const count = clfDict[clfKey],
 			boundCounter = idCounter;
 
 		// The second case checks that the glyph is already a hieroglyph
 		if (projectType !== 'hieroglyphic' || clfKey.codePointAt(0) >= 256) {
 			// Don't need to download stuff
-			nodes.add({id: boundCounter, label: clfKey, color: '#b0c0ff', size: radius});
+			nodes.add({ id: boundCounter, label: clfKey, color: '#b0c0ff', size: radius });
 		} else {
 			try {
 				const response = await fetch(
-					'https://www.iclassifier.pw/api/jseshrender/?height=100&centered=true&mdc=' + clfKey
+					'https://iclassifier.pw/api/jseshrender/?height=100&centered=true&mdc=' + clfKey
 				);
 				if (!response.ok) {
 					// Failed to visualise MdC

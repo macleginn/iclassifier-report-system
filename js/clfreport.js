@@ -22,7 +22,7 @@ let clfReport = {
 			window.location.hash = `!${project}/classifiers/${clfReport.currentClf}`;
 		return m(
 			'div',
-			{style: {display: showClfReports ? 'block' : 'none', 'padding-top': '0'}},
+			{ style: { display: showClfReports ? 'block' : 'none', 'padding-top': '0' } },
 			[
 				m('h4', 'Select a classifier: '),
 				m('br'),
@@ -37,10 +37,10 @@ let clfReport = {
 						},
 						value: clfReport.currentClf
 					},
-					[m('option', {disabled: true, value: '---'}, '---')]
+					[m('option', { disabled: true, value: '---' }, '---')]
 						.concat(clfArr.map(clf => m(
 							'option',
-							{value: getClfMDC(clf)},
+							{ value: getClfMDC(clf) },
 							clf)))
 				),
 				m('br'), m('br'),
@@ -84,7 +84,7 @@ let clfReport = {
 					},
 					clfTypeArr.map(typeTuple => m(
 						'option',
-						{value: typeTuple[0]},
+						{ value: typeTuple[0] },
 						typeTuple[1]))
 				),
 
@@ -105,7 +105,7 @@ let clfReport = {
 					},
 					clfLevelArr.map(levelTuple => m(
 						'option',
-						{value: levelTuple[0]},
+						{ value: levelTuple[0] },
 						levelTuple[1]))
 				),
 
@@ -125,16 +125,16 @@ let clfReport = {
 						value: clfReport.clfPosition
 					},
 					[
-						m('option', {value: 'any'}, 'Any'),
-						m('option', {value: 'pre'}, 'Initial'),
-						m('option', {value: 'post'}, 'Final'),
-						m('option', {value: 'inner'}, 'Inner'),
+						m('option', { value: 'any' }, 'Any'),
+						m('option', { value: 'pre' }, 'Initial'),
+						m('option', { value: 'post' }, 'Final'),
+						m('option', { value: 'inner' }, 'Inner'),
 					]
 				),
 
 				// The report components
-				m(clfLemmaMap, {clf: clfReport.currentClf}),
-				m(clfClfMap, {clf: clfReport.currentClf}),
+				m(clfLemmaMap, { clf: clfReport.currentClf }),
+				m(clfClfMap, { clf: clfReport.currentClf }),
 				m(clfStats)
 
 
@@ -151,12 +151,14 @@ let clfLemmaMap = {
 	},
 	view: () => m('div', [
 		m('h3', 'Lemma co-occurrence graph'),
-		m('div#canvas1', {style: {
-			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
-		}}),
-		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas1');}},
+		m('div#canvas1', {
+			style: {
+				width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
+			}
+		}),
+		m('button', { onclick: e => { e.redraw = false; toggleBgrCol('canvas1'); } },
 			'Switch background color'),
-		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas1');}},
+		m('button', { onclick: e => { e.redraw = false; goFullScreen('canvas1'); } },
 			'Go fullscreen')
 	])
 }
@@ -170,12 +172,14 @@ let clfClfMap = {
 	},
 	view: () => m('div', [
 		m('h3', 'Classifier co-occurrence graph'),
-		m('div#canvas2', {style: {
-			width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
-		}}),
-		m('button', {onclick: e => {e.redraw=false; toggleBgrCol('canvas2')}},
+		m('div#canvas2', {
+			style: {
+				width: '640px', height: '480px', 'marign-bottom': '5px', 'background-color': 'white'
+			}
+		}),
+		m('button', { onclick: e => { e.redraw = false; toggleBgrCol('canvas2') } },
 			'Switch background color'),
-		m('button', {onclick: e => {e.redraw=false; goFullScreen('canvas2')}},
+		m('button', { onclick: e => { e.redraw = false; goFullScreen('canvas2') } },
 			'Go fullscreen')
 	])
 }
@@ -198,18 +202,18 @@ let clfStats = {
 					tokensForClf.map(tokenId => m.trust(`<li>${showTokenWithClfs(tokenId)}</li>`,))
 				)),
 			m('h3', 'Lemma co-occurrence statistics'),
-			m(statsDiv, {data: lemDict, font: 'unicode-egyptian', header: 'Lemma'}),
+			m(statsDiv, { data: lemDict, font: 'unicode-egyptian', header: 'Lemma' }),
 			m('h3', 'Classifier co-occurrence statistics'),
-			m(statsDiv, {data: clfDict, font: '', header: 'Classifier'}),
+			m(statsDiv, { data: clfDict, font: '', header: 'Classifier' }),
 			m('h3', 'Classifier combinations with this classifier'),
-			m(statsDiv, {data: comDict, font: '', header: 'Classifier combination'}),
+			m(statsDiv, { data: comDict, font: '', header: 'Classifier combination' }),
 			m('h3', 'POS co-occurrence statistics'),
-			m(statsDiv, {data: posDict, font: 'default', header: 'Part of speech'}),
+			m(statsDiv, { data: posDict, font: 'default', header: 'Part of speech' }),
 			m('h3', 'Order statistics'),
-			m(statsDiv, {data: ordDict, font: 'default', header: 'Classifier position'}),
+			m(statsDiv, { data: ordDict, font: 'default', header: 'Classifier position' }),
 			m('h3', 'Script statistics'),
-			m(statsDiv, {data: scrDict, font: 'default', header: 'Script'}),
-	])
+			m(statsDiv, { data: scrDict, font: 'default', header: 'Script' }),
+		])
 	}
 }
 
@@ -273,7 +277,7 @@ function getClfReport(mdc) {
 		if (clfReport.clfPosition === 'post' && !endswith(tokenInfo.mdc_w_markup, clfTildes)) { continue; }
 		if (clfReport.clfPosition === 'inner' &&
 			(startswith(tokenInfo.mdc_w_markup, clfTildes) ||
-			 endswith(tokenInfo.mdc_w_markup, clfTildes))) { continue; }
+				endswith(tokenInfo.mdc_w_markup, clfTildes))) { continue; }
 
 		let types = new Set();
 		for (const clfType of String(clfParse.clf_type).split(';'))
@@ -294,7 +298,7 @@ function getClfReport(mdc) {
 			lemmaID = tokenInfo.lemma_id;
 
 		// Order stats for this classifier
-		const position = clfs.indexOf(mdc)+1;
+		const position = clfs.indexOf(mdc) + 1;
 		if (!ordDict.hasOwnProperty(position))
 			ordDict[position] = 0;
 		ordDict[position]++;
@@ -325,16 +329,16 @@ function getClfReport(mdc) {
 				lemDict[key1] = 0;
 			lemDict[key1]++;
 			lemMean[key1] = firstMeaning(lemmaData[lemmaID].meaning);
-        }
+		}
 
 		// Script co-occurrence stats
 		const witnessID = tokenInfo.witness_id;
 		if (witnessID !== undefined &&
-			witnessID !== null      &&
-			witnessID !== ''        &&
+			witnessID !== null &&
+			witnessID !== '' &&
 			witnessData[witnessID] !== undefined) {
 			const scriptId = witnessData[witnessID].script,
-				  script   = normaliseScript(scriptId);
+				script = normaliseScript(scriptId);
 			if (script !== '' && script !== null) {
 				if (!scrDict.hasOwnProperty(script))
 					scrDict[script] = 0;
@@ -342,7 +346,7 @@ function getClfReport(mdc) {
 			}
 		}
 
-        // CLF co-occurrence stats
+		// CLF co-occurrence stats
 		for (const value of glyphs) {
 			if (value === glyph)
 				continue;
@@ -350,7 +354,7 @@ function getClfReport(mdc) {
 				clfDict[value] = 0;
 			clfDict[value]++;
 		}
-    }
+	}
 	// Done, draw the maps.
 
 }
@@ -379,16 +383,16 @@ async function drawLemmaGraph(clf) {
 	let centralNodeFont;
 	switch (projectType) {
 		case 'cuneiform':
-			options.nodes.font = {face: 'cuneiform'};
+			options.nodes.font = { face: 'cuneiform' };
 			centralNodeFont = 'cuneiform';
 			break;
 		case 'hieroglyphic':
 			// Use Roboto for lemmas and hierofont for the classifier.
-			options.nodes.font = {face: 'Roboto'};
+			options.nodes.font = { face: 'Roboto' };
 			centralNodeFont = 'hierofont';
 			break;
 		case 'chinese':
-			options.nodes.font = {face: 'Noto Sans TC'};
+			options.nodes.font = { face: 'Noto Sans TC' };
 			centralNodeFont = 'Noto Sans TC';
 			break;
 		default:
@@ -401,10 +405,10 @@ async function drawLemmaGraph(clf) {
 	if (projectType === 'hieroglyphic' && baseGlyph === clf) {
 		try {
 			const response = await fetch(
-				'https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=' + mdc
+				'https://iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=' + mdc
 			);
 			if (!response.ok)
-				nodes.add({id: 1, label: clf, color: {background: 'beige'}});
+				nodes.add({ id: 1, label: clf, color: { background: 'beige' } });
 			else {
 				const base64 = await response.text(),
 					centreNode = {
@@ -420,13 +424,17 @@ async function drawLemmaGraph(clf) {
 					};
 				nodes.add(centreNode);
 			}
-		} catch(err) {
-			nodes.add({id: 1, label: clf, color: {background: 'beige'},
-			font: {face: centralNodeFont}});
+		} catch (err) {
+			nodes.add({
+				id: 1, label: clf, color: { background: 'beige' },
+				font: { face: centralNodeFont }
+			});
 		}
 	} else
-		nodes.add({id: 1, label: baseGlyph, color: {background: 'beige'},
-			font: {face: centralNodeFont}});
+		nodes.add({
+			id: 1, label: baseGlyph, color: { background: 'beige' },
+			font: { face: centralNodeFont }
+		});
 
 	// Populate the lemma graph
 	for (const lemma in lemDict) {
@@ -443,7 +451,7 @@ async function drawLemmaGraph(clf) {
 			shape: 'circle',
 			color: 'rgba(0, 255, 0, 0.4)'
 		});
-		edges.add({from: 1, to: idCounter, color: 'gray', width: lemDict[lemma]});
+		edges.add({ from: 1, to: idCounter, color: 'gray', width: lemDict[lemma] });
 		idCounter++;
 	}
 }
@@ -480,13 +488,13 @@ async function drawClfGraph(clf) {
 
 	switch (projectType) {
 		case 'cuneiform':
-			options.nodes.font = {face: 'cuneiform'};
+			options.nodes.font = { face: 'cuneiform' };
 			break;
 		case 'hieroglyphic':
-			options.nodes.font = {face: 'hierofont'};
+			options.nodes.font = { face: 'hierofont' };
 			break;
 		case 'chinese':
-			options.nodes.font = {face: 'Noto Sans TC'};
+			options.nodes.font = { face: 'Noto Sans TC' };
 			break;
 		default:
 			break;
@@ -498,10 +506,10 @@ async function drawClfGraph(clf) {
 	if (projectType === 'hieroglyphic' && baseGlyph === mdc) {
 		try {
 			const response = await fetch(
-				'https://www.iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=' + mdc
+				'https://iclassifier.pw/api/jseshrender/?height=20&centered=true&mdc=' + mdc
 			);
 			if (!response.ok)
-				nodes.add({id: 1, label: clf, color: {background: 'beige'}});
+				nodes.add({ id: 1, label: clf, color: { background: 'beige' } });
 			else {
 				const base64 = await response.text(),
 					centreNode = {
@@ -517,24 +525,24 @@ async function drawClfGraph(clf) {
 					};
 				nodes.add(centreNode);
 			}
-		} catch(err) {
-			nodes.add({id: 1, label: clf, color: {background: 'beige'}});
+		} catch (err) {
+			nodes.add({ id: 1, label: clf, color: { background: 'beige' } });
 		}
 	} else
-		nodes.add({id: 1, label: baseGlyph, color: 'beige'});
+		nodes.add({ id: 1, label: baseGlyph, color: 'beige' });
 
 	for (const clfKey in clfDict) {
 		if (!clfDict.hasOwnProperty(clfKey))
 			continue;
 
-		const count      = clfDict[clfKey],
+		const count = clfDict[clfKey],
 			boundCounter = idCounter;
 
 		console.log(`${clfKey}: ${clfKey.codePointAt(0)}`);
 		// The second case checks that the glyph is already a hieroglyph
 		if (projectType !== 'hieroglyphic' || clfKey.codePointAt(0) >= 256) {
 			// Don't need to download stuff
-			nodes.add({id: boundCounter, label: clfKey, color: '#b0c0ff', size: radius});
+			nodes.add({ id: boundCounter, label: clfKey, color: '#b0c0ff', size: radius });
 			//edges.add({
 			//	from: 1,
 			//	to: boundCounter,
@@ -545,7 +553,7 @@ async function drawClfGraph(clf) {
 		} else {
 			try {
 				const response = await fetch(
-					'https://www.iclassifier.pw/api/jseshrender/?height=100&centered=true&mdc=' + clfKey
+					'https://iclassifier.pw/api/jseshrender/?height=100&centered=true&mdc=' + clfKey
 				);
 				if (!response.ok) {
 					// Failed to visualise MdC

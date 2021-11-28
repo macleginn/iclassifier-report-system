@@ -1,23 +1,23 @@
-const authURL    = 'https://www.iclassifier.pw/api/authserver',
-// const authURL    = 'http://127.0.0.1:21000',
-	requestURL = 'https://www.iclassifier.pw/api/egyptian-backend/readonly',
-	  // requestURL = 'http://127.0.0.1:11000/readonly',
-	  jseshURL   = 'https://iclassifier.pw/api/jseshrender/?mdc=';
+const authURL = 'https://iclassifier.pw/api/authserver',
+	// const authURL    = 'http://127.0.0.1:21000',
+	requestURL = 'https://iclassifier.pw/api/egyptian-backend/readonly',
+	// requestURL = 'http://127.0.0.1:11000/readonly',
+	jseshURL = 'https://iclassifier.pw/api/jseshrender/?mdc=';
 
-let path             = null,
-	project          = null,
-	projectType      = null,
-	downloadingData  = false,
-	showClfQueries   = false,
-	showClfReports   = false,
+let path = null,
+	project = null,
+	projectType = null,
+	downloadingData = false,
+	showClfQueries = false,
+	showClfReports = false,
 	showLemmaReports = false,
-	showMap          = false;
+	showMap = false;
 
 function setMenu(menuName) {
-	showClfQueries   = false;
-	showClfReports   = false;
+	showClfQueries = false;
+	showClfReports = false;
 	showLemmaReports = false;
-	showMap          = false;
+	showMap = false;
 	switch (menuName) {
 		case 'clfQueries':
 			showClfQueries = true;
@@ -36,13 +36,13 @@ function setMenu(menuName) {
 	}
 }
 
-let tokenData      = null,
-    clfData		   = null,
+let tokenData = null,
+	clfData = null,
 	compoundTokens = null,
-	compoundParts  = null,
-	clfArr         = [],
-	lemmaData      = null,
-	witnessData    = null;
+	compoundParts = null,
+	clfArr = [],
+	lemmaData = null,
+	witnessData = null;
 
 // A dictionary mapping compound parts to compounds
 // and compounds to part id's.
@@ -63,9 +63,9 @@ let clfDict = {},
 // A common part of classifier and lemma reports
 let statsDiv = {
 	view: vnode => {
-		const dict   = vnode.attrs.data,
-			  font   = vnode.attrs.font,
-			  header = vnode.attrs.header;
+		const dict = vnode.attrs.data,
+			font = vnode.attrs.font,
+			header = vnode.attrs.header;
 		if (JSON.stringify(dict) === JSON.stringify({}))
 			return m('div', 'No data');
 		else {
@@ -81,8 +81,8 @@ let statsDiv = {
 
 let statsTable = {
 	view: vnode => {
-		let rows   = vnode.attrs.data,
-			font   = vnode.attrs.font,
+		let rows = vnode.attrs.data,
+			font = vnode.attrs.font,
 			header = vnode.attrs.header,
 			cssClass;
 		if (font === 'unicode-egyptian')
@@ -95,34 +95,37 @@ let statsTable = {
 		return m('table.stats', [
 			m(
 				'tr',
-				{style: {'border-bottom': '1px dotted black'}},
+				{ style: { 'border-bottom': '1px dotted black' } },
 				[
 					m('th',
-						{style: {
-							width: '570px',
-							'text-align': 'left'}},
+						{
+							style: {
+								width: '570px',
+								'text-align': 'left'
+							}
+						},
 						header),
-					m('th', {style: {'text-align': 'left'}}, 'Count')
+					m('th', { style: { 'text-align': 'left' } }, 'Count')
 				]
 			)
 		].concat(
 			rows.map(row => m(
 				'tr',
-				[m('td', {class: cssClass}, row[0]), m('td', row[1])]
+				[m('td', { class: cssClass }, row[0]), m('td', row[1])]
 			)))
 		);
 	}
 }
 
 function cmpInts(a, b) {
-    let aInt = parseInt(a),
-        bInt = parseInt(b);
-    if (aInt < bInt)
-        return -1;
-    else if (aInt > bInt)
-        return 1;
-    else
-        return 0;
+	let aInt = parseInt(a),
+		bInt = parseInt(b);
+	if (aInt < bInt)
+		return -1;
+	else if (aInt > bInt)
+		return 1;
+	else
+		return 0;
 }
 
 function sortCounterDesc(dict) {
@@ -153,7 +156,7 @@ function startswith(inputString, prefix) {
 function endswith(inputString, prefix) {
 	const slen = inputString.length,
 		plen = prefix.length;
-	return inputString.indexOf(prefix) !== -1 && inputString.slice(slen-plen) === prefix;
+	return inputString.indexOf(prefix) !== -1 && inputString.slice(slen - plen) === prefix;
 }
 
 function goFullScreen(elementID) {
@@ -170,26 +173,26 @@ function goFullScreen(elementID) {
 }
 
 function extractClfsFromString(s) {
-    let inside_clf = false,
-        temp = [],
-        result = [];
-    if (s === null)
-        return result;
-    for (let i = 0; i < s.length; i++) {
-        if (s.charAt(i) === '~') {
-            if (inside_clf) {
-                result.push(temp.join(''));
-                temp = [];
-                inside_clf = false;
-            } else {
-                inside_clf = true;
-            }
-        } else {
-            if (inside_clf)
-                temp.push(s.charAt(i));
-        }
-    }
-    return result
+	let inside_clf = false,
+		temp = [],
+		result = [];
+	if (s === null)
+		return result;
+	for (let i = 0; i < s.length; i++) {
+		if (s.charAt(i) === '~') {
+			if (inside_clf) {
+				result.push(temp.join(''));
+				temp = [];
+				inside_clf = false;
+			} else {
+				inside_clf = true;
+			}
+		} else {
+			if (inside_clf)
+				temp.push(s.charAt(i));
+		}
+	}
+	return result
 }
 
 function mdc2glyph(mdc) {
@@ -241,7 +244,7 @@ function normaliseScript(scriptId) {
 
 async function switchProject(element) {
 	setMenu(null);
-	clfReport.currentClf     = '---';
+	clfReport.currentClf = '---';
 	lemmaReport.currentLemma = '---';
 
 	byID('canvas1').innerHTML = '';
@@ -252,8 +255,8 @@ async function switchProject(element) {
 	downloadingData = true;
 	m.redraw();
 
-	const fields     = element.value.split('|'),
-		  newProject = fields[0];
+	const fields = element.value.split('|'),
+		newProject = fields[0];
 	projectType = fields[1];
 
 	let response = await fetch(`${requestURL}/${newProject}/tokens/all`);
@@ -281,7 +284,7 @@ async function switchProject(element) {
 			continue;
 
 		const mdc = tokenData[key].mdc_w_markup,
-		      clfs = extractClfsFromString(mdc);
+			clfs = extractClfsFromString(mdc);
 		for (const clf of clfs) {
 			let glyph = mdc2glyph(clf);
 			if (clf !== glyph)
@@ -302,7 +305,7 @@ async function switchProject(element) {
 	lemmaData = await response.json();
 
 	response = await fetch(`${requestURL}/${newProject}/witnesses/all`);
-		if (!response.ok) {
+	if (!response.ok) {
 		const message = await response.text();
 		alert("Failed to download witness info from the server: " + message);
 		return;
@@ -418,7 +421,7 @@ async function fetchProjects() {
 		if (!data.hasOwnProperty(key))
 			continue;
 		let option = document.createElement('option');
-		option.text  = data[key].title;
+		option.text = data[key].title;
 		option.value = `${key}|${data[key].type}`;
 		projectSelect.appendChild(option);
 	}
@@ -462,7 +465,7 @@ function firstMeaning(meaning) {
  * witness name and coordinates when those are available.
  */
 function showTokenWithClfs(tokenId) {
-	let	clfArr       = extractClfsFromString(tokenData[tokenId].mdc_w_markup),
+	let clfArr = extractClfsFromString(tokenData[tokenId].mdc_w_markup),
 		colouredSpan = colourClassifiers(tokenData[tokenId].mdc_w_markup);
 
 	if (projectType === 'hieroglyphic')

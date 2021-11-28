@@ -1,5 +1,5 @@
 # A report system for the iClassifier project
 
-The report system is live at https://www.iclassifier.pw/reports/
+The report system is live at https://iclassifier.pw/reports/
 
-See https://www.iclassifier.pw for details about the project.
+See https://iclassifier.pw for details about the project.

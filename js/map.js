@@ -4,83 +4,88 @@ let map = {
 	view: () => {
 		return m(
 			'div',
-			{style: {display: showMap ? 'block' : 'none'}},
+			{ style: { display: showMap ? 'block' : 'none' } },
 			[
-				m('div', {style: {display: 'grid', 'grid-template-columns': '1fr 1fr'}}, [
-					m('div', {style: {'grid-column': '1/2'}}, [
-						m('div', {style: {display: 'inline-block', 'vertical-align': 'top'}}, 'Select classifier levels to be included in the map:'),
-						m('div', {style: { display: 'inline-block', 'margin-left': '10px' }}, [
-							m('input[type=checkbox]', {id: 'include-lexical', checked: true}),
-							m('label', {for: 'include-lexical'}, 'Lexical'), m('br'),
-							m('input[type=checkbox]', {id: 'include-pragmatic', checked: true}),
-							m('label', {for: 'include-pragmatic'}, 'Pragmatic'), m('br'),
-							m('input[type=checkbox]', {id: 'include-derivational', checked: true}),
-							m('label', {for: 'include-derivational'}, 'Derivational'), m('br'),
-							m('input[type=checkbox]', {id: 'include-metatextual', checked: true}),
-							m('label', {for: 'include-metatextual'}, 'Metatextual'), m('br'),
-							m('input[type=checkbox]', {id: 'include-phonetic', checked: true}),
-							m('label', {for: 'include-phonetic'}, 'Phonetic (incl. false etymology)'),
+				m('div', { style: { display: 'grid', 'grid-template-columns': '1fr 1fr' } }, [
+					m('div', { style: { 'grid-column': '1/2' } }, [
+						m('div', { style: { display: 'inline-block', 'vertical-align': 'top' } }, 'Select classifier levels to be included in the map:'),
+						m('div', { style: { display: 'inline-block', 'margin-left': '10px' } }, [
+							m('input[type=checkbox]', { id: 'include-lexical', checked: true }),
+							m('label', { for: 'include-lexical' }, 'Lexical'), m('br'),
+							m('input[type=checkbox]', { id: 'include-pragmatic', checked: true }),
+							m('label', { for: 'include-pragmatic' }, 'Pragmatic'), m('br'),
+							m('input[type=checkbox]', { id: 'include-derivational', checked: true }),
+							m('label', { for: 'include-derivational' }, 'Derivational'), m('br'),
+							m('input[type=checkbox]', { id: 'include-metatextual', checked: true }),
+							m('label', { for: 'include-metatextual' }, 'Metatextual'), m('br'),
+							m('input[type=checkbox]', { id: 'include-phonetic', checked: true }),
+							m('label', { for: 'include-phonetic' }, 'Phonetic (incl. false etymology)'),
 						])
 					]),
-					m('div', {style: {'grid-column': '2/3'}}, [
-						m('div', {style: {display: 'inline-block', 'vertical-align': 'top'}}, 'Select classifier types to be included in the map:'),
-						m('div', {style: { display: 'inline-block', 'margin-left': '10px' }}, [
-							m('input[type=checkbox]', {id: 'include-taxonomic', checked: true}),
-							m('label', {for: 'include-taxonomic'}, 'Taxonomic'), m('br'),
-							m('input[type=checkbox]', {id: 'include-taxonomic_repeater', checked: true}),
-							m('label', {for: 'include-taxonomic_repeater'}, 'Taxonomic repeater'), m('br'),
-							m('input[type=checkbox]', {id: 'include-taxonomic_metaphoric', checked: true}),
-							m('label', {for: 'include-taxonomic_metaphoric'}, 'Taxonomic metaphoric'), m('br'),
-							m('input[type=checkbox]', {id: 'include-schematic', checked: true}),
-							m('label', {for: 'include-schematic'}, 'Schematic'), m('br'),
-							m('input[type=checkbox]', {id: 'include-unclear', checked: true}),
-							m('label', {for: 'include-unclear'}, 'Unclear'),
+					m('div', { style: { 'grid-column': '2/3' } }, [
+						m('div', { style: { display: 'inline-block', 'vertical-align': 'top' } }, 'Select classifier types to be included in the map:'),
+						m('div', { style: { display: 'inline-block', 'margin-left': '10px' } }, [
+							m('input[type=checkbox]', { id: 'include-taxonomic', checked: true }),
+							m('label', { for: 'include-taxonomic' }, 'Taxonomic'), m('br'),
+							m('input[type=checkbox]', { id: 'include-taxonomic_repeater', checked: true }),
+							m('label', { for: 'include-taxonomic_repeater' }, 'Taxonomic repeater'), m('br'),
+							m('input[type=checkbox]', { id: 'include-taxonomic_metaphoric', checked: true }),
+							m('label', { for: 'include-taxonomic_metaphoric' }, 'Taxonomic metaphoric'), m('br'),
+							m('input[type=checkbox]', { id: 'include-schematic', checked: true }),
+							m('label', { for: 'include-schematic' }, 'Schematic'), m('br'),
+							m('input[type=checkbox]', { id: 'include-unclear', checked: true }),
+							m('label', { for: 'include-unclear' }, 'Unclear'),
 						])
 					]),
-					m('div', {style: {'margin-top': '5px'}}, [
-						m('input[type=button]', {value: 'Draw w/selected', onclick: e => { e.redraw = false; drawMapByLevelAndType(); } }),
-						m('input[type=button]', {value: 'Draw w/unanalysed', onclick: e => { e.redraw = false; drawMapAll(); }}),
+					m('div', { style: { 'margin-top': '5px' } }, [
+						m('input[type=button]', { value: 'Draw w/selected', onclick: e => { e.redraw = false; drawMapByLevelAndType(); } }),
+						m('input[type=button]', { value: 'Draw w/unanalysed', onclick: e => { e.redraw = false; drawMapAll(); } }),
 						m('div', {
-								style: {
-									display: projectType === 'hieroglyphic' ? 'inline-block' : 'none'
-								}
-							},
+							style: {
+								display: projectType === 'hieroglyphic' ? 'inline-block' : 'none'
+							}
+						},
 							[
 								m('input[type=checkbox]', {
 									id: 'use-unicode-checkbox',
 									checked: useUnicode,
-									onclick: e => { 
+									onclick: e => {
 										e.redraw = false;
-										useUnicode = !useUnicode; 
+										useUnicode = !useUnicode;
 									}
 								}),
-								m('label', { for: 'use-unicode-checkbox' }, 
+								m('label', { for: 'use-unicode-checkbox' },
 									'Use Unicode glyphs for hieroglyphs when available')
 							]
 						)
 					])
 				]),
 
-				m('div', {id: 'clf-map', style:
-						{
-							width: 'calc(100vw-50px)',
-							height: '600px',
-							border: '1px dotted darkgrey',
-							'margin-top': '15px',
-							'margin-bottom': '5px',
-							'background-color': 'white'
-					}}),
+				m('div', {
+					id: 'clf-map', style:
+					{
+						width: 'calc(100vw-50px)',
+						height: '600px',
+						border: '1px dotted darkgrey',
+						'margin-top': '15px',
+						'margin-bottom': '5px',
+						'background-color': 'white'
+					}
+				}),
 				m('input[type=button]', {
 					value: 'Switch background colour',
-					onclick: e => {e.redraw=false; toggleBgrCol('clf-map');}}),
+					onclick: e => { e.redraw = false; toggleBgrCol('clf-map'); }
+				}),
 				m('input[type=button]', {
-					style: {'margin-left': '5px'},
+					style: { 'margin-left': '5px' },
 					value: 'Go fullscreen',
-					onclick: e => {e.redraw=false; goFullScreen('clf-map');}}),
+					onclick: e => { e.redraw = false; goFullScreen('clf-map'); }
+				}),
 				m('input[type=button]', {
-					style: {'margin-left': '5px'},
+					style: { 'margin-left': '5px' },
 					value: 'Freeze the network',
-					onclick: () => { network.setOptions({physics: false}); }})
+					onclick: () => { network.setOptions({ physics: false }); }
+				})
 			]);
 	}
 }
@@ -111,11 +116,11 @@ function drawMapAll() {
 			lemEdgeDict[edgeKey] = get(lemEdgeDict, edgeKey, 0) + 1;
 		} else {
 			clfs.sort(compareClfMDC); // A canonical order of clfs needed
-									  // to create edges in the graph
-			for (let i = 0; i < clfs.length-1; i++) {
+			// to create edges in the graph
+			for (let i = 0; i < clfs.length - 1; i++) {
 				const edgeKey1 = `${clfs[i]}>${lemmaID}`;
 				lemEdgeDict[edgeKey1] = get(lemEdgeDict, edgeKey1, 0) + 1;
-				for (let j = i+1; j < clfs.length; j++) {
+				for (let j = i + 1; j < clfs.length; j++) {
 					let edgeKey2 = `${clfs[i]}>${clfs[j]}`;
 					clfEdgeDict[edgeKey2] = get(clfEdgeDict, edgeKey2, 0) + 1;
 				}
@@ -123,7 +128,7 @@ function drawMapAll() {
 		}
 	}
 
-	drawMapFromDicts(clfNodeDict,lemNodeDict,lemEdgeDict,clfEdgeDict);
+	drawMapFromDicts(clfNodeDict, lemNodeDict, lemEdgeDict, clfEdgeDict);
 }
 
 /**
@@ -215,17 +220,17 @@ function drawMapByLevelAndType() {
 		if (clfArr.length === 1)
 			continue;
 		// Each classifier is connected to all subsequent ones
-		for (let i = 0; i < clfArr.length-1; i++)
-			for (let j = i+1; j < clfArr.length; j++) {
+		for (let i = 0; i < clfArr.length - 1; i++)
+			for (let j = i + 1; j < clfArr.length; j++) {
 				const edgeKey = `${clfArr[i]}>${clfArr[j]}`;
 				if (clfEdgeDict.hasOwnProperty(edgeKey))
 					clfEdgeDict[edgeKey]++;
 				else
-					clfEdgeDict[edgeKey]=1;
+					clfEdgeDict[edgeKey] = 1;
 			}
 	}
 
-	drawMapFromDicts(clfNodeDict,lemNodeDict,lemEdgeDict,clfEdgeDict);
+	drawMapFromDicts(clfNodeDict, lemNodeDict, lemEdgeDict, clfEdgeDict);
 }
 
 function compareClfMDC(a, b) {
@@ -338,7 +343,7 @@ async function drawMapFromDicts(
 	for (const key in clfNodeDict) {
 		if (!clfNodeDict.hasOwnProperty(key)) { continue; }
 		const clfGlyph = mdc2glyph(key);
-		if (projectType !== 'hieroglyphic' || 
+		if (projectType !== 'hieroglyphic' ||
 			(clfGlyph !== key && useUnicode)) {
 			// Don't need to download stuff
 			nodes.add({
@@ -353,7 +358,7 @@ async function drawMapFromDicts(
 			continue;
 		}
 		try {
-			const response = await fetch('https://www.iclassifier.pw/api/jseshrender/?height=50&centered=true&mdc=' + key);
+			const response = await fetch('https://iclassifier.pw/api/jseshrender/?height=50&centered=true&mdc=' + key);
 			if (!response.ok) {
 				const error = await response.text();
 				console.log(`Failed to download a Jsesh picture: ${error}`);
